@@ -1,0 +1,91 @@
+is_global = true
+build_property.TargetFramework = net8.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = App_UI
+build_property.RootNamespace = App_UI
+build_property.ProjectDir = C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App_UI\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 8.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App_UI
+build_property._RazorSourceGeneratorDebug = 
+
+[C:/ProgramacionC/ObligatorioDA1-319853-302420-325480/Mundial_319853-302420-325480/App_UI/Components/App.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBcHAucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/ProgramacionC/ObligatorioDA1-319853-302420-325480/Mundial_319853-302420-325480/App_UI/Components/Pages/Auditoria.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBdWRpdG9yaWEucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/ProgramacionC/ObligatorioDA1-319853-302420-325480/Mundial_319853-302420-325480/App_UI/Components/Pages/Equipos.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFcXVpcG9zLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/ProgramacionC/ObligatorioDA1-319853-302420-325480/Mundial_319853-302420-325480/App_UI/Components/Pages/Error.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFcnJvci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/ProgramacionC/ObligatorioDA1-319853-302420-325480/Mundial_319853-302420-325480/App_UI/Components/Pages/Estadios.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFc3RhZGlvcy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/ProgramacionC/ObligatorioDA1-319853-302420-325480/Mundial_319853-302420-325480/App_UI/Components/Pages/Exportacion.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFeHBvcnRhY2lvbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/ProgramacionC/ObligatorioDA1-319853-302420-325480/Mundial_319853-302420-325480/App_UI/Components/Pages/Fixture.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xGaXh0dXJlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/ProgramacionC/ObligatorioDA1-319853-302420-325480/Mundial_319853-302420-325480/App_UI/Components/Pages/Home.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xIb21lLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/ProgramacionC/ObligatorioDA1-319853-302420-325480/Mundial_319853-302420-325480/App_UI/Components/Pages/Importacion.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xJbXBvcnRhY2lvbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/ProgramacionC/ObligatorioDA1-319853-302420-325480/Mundial_319853-302420-325480/App_UI/Components/Pages/Login.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xMb2dpbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/ProgramacionC/ObligatorioDA1-319853-302420-325480/Mundial_319853-302420-325480/App_UI/Components/Pages/Notificaciones.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xOb3RpZmljYWNpb25lcy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/ProgramacionC/ObligatorioDA1-319853-302420-325480/Mundial_319853-302420-325480/App_UI/Components/Pages/Partidos.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xQYXJ0aWRvcy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/ProgramacionC/ObligatorioDA1-319853-302420-325480/Mundial_319853-302420-325480/App_UI/Components/Pages/Semillas.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTZW1pbGxhcy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/ProgramacionC/ObligatorioDA1-319853-302420-325480/Mundial_319853-302420-325480/App_UI/Components/Pages/Usuarios.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xVc3Vhcmlvcy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/ProgramacionC/ObligatorioDA1-319853-302420-325480/Mundial_319853-302420-325480/App_UI/Components/Routes.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xSb3V0ZXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/ProgramacionC/ObligatorioDA1-319853-302420-325480/Mundial_319853-302420-325480/App_UI/Components/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xfSW1wb3J0cy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/ProgramacionC/ObligatorioDA1-319853-302420-325480/Mundial_319853-302420-325480/App_UI/Components/Layout/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTWFpbkxheW91dC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-hjh7q5h05q
+
+[C:/ProgramacionC/ObligatorioDA1-319853-302420-325480/Mundial_319853-302420-325480/App_UI/Components/Layout/NavMenu.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTmF2TWVudS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-3ui0w9torf

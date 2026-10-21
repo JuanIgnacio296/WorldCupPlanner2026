@@ -1,0 +1,165 @@
+@page "/importar-equipos"
+
+@using DTOs
+@using Services.Interfaces
+@using Microsoft.AspNetCore.Components.Forms
+
+@inject IImportacionService ImportacionService
+@inject ISesionService SesionService
+@inject NavigationManager NavigationManager
+
+@rendermode InteractiveServer
+
+<PageTitle>Importar equipos</PageTitle>
+
+<div class="container mt-4">
+    <h1>Importar equipos</h1>
+
+    @if (!string.IsNullOrEmpty(mensajeError))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @mensajeError
+            <button type="button" class="btn-close" @onclick="() => mensajeError = null" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(mensajeExito))
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @mensajeExito
+            <button type="button" class="btn-close" @onclick="() => mensajeExito = null" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (puedeImportar)
+    {
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Importar archivo CSV</h5>
+            </div>
+
+            <div class="card-body">
+                <p class="mb-2">
+                    Seleccioná un archivo CSV con el siguiente encabezado:
+                </p>
+
+                <pre class="bg-light border rounded p-2">Nombre,Confederacion,RankingFIFA</pre>
+
+                <div class="mb-3">
+                    <label class="form-label">Archivo CSV</label>
+                    <InputFile class="form-control" OnChange="CargarArchivo" accept=".csv" />
+                </div>
+
+                <small class="text-muted">
+                    Si alguna fila tiene errores, no se importará ningún equipo.
+                </small>
+            </div>
+        </div>
+
+        @if (resultado != null)
+        {
+            if (resultado.FueExitosa)
+            {
+                <div class="alert alert-success">
+                    <strong>Importación exitosa.</strong>
+                    <p class="mb-0">Cantidad de equipos importados: @resultado.CantidadImportada</p>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-danger">
+                    <strong>La importación tuvo errores.</strong>
+                    <p>No se importó ningún equipo.</p>
+
+                    <ul class="mb-0">
+                        @foreach (string error in resultado.Errores)
+                        {
+                            <li>@error</li>
+                        }
+                    </ul>
+                </div>
+            }
+        }
+    }
+</div>
+
+@code {
+    private ResultadoImportacionReadDto? resultado;
+    private string? mensajeError;
+    private string? mensajeExito;
+    private UsuarioReadDto? usuarioActual;
+
+    private bool puedeImportar => usuarioActual?.EsEditor == true;
+
+    protected override void OnInitialized()
+    {
+        usuarioActual = SesionService.ObtenerUsuarioActual();
+
+        if (usuarioActual == null)
+        {
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+
+        if (!puedeImportar)
+        {
+            NavigationManager.NavigateTo("/home");
+            return;
+        }
+    }
+
+    private async Task CargarArchivo(InputFileChangeEventArgs e)
+    {
+        resultado = null;
+        mensajeError = null;
+        mensajeExito = null;
+
+        try
+        {
+            if (usuarioActual == null)
+            {
+                mensajeError = "Debe iniciar sesión para importar equipos.";
+                return;
+            }
+
+            IBrowserFile archivo = e.File;
+
+            if (archivo == null)
+            {
+                mensajeError = "Debe seleccionar un archivo.";
+                return;
+            }
+
+            if (!archivo.Name.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
+            {
+                mensajeError = "El archivo debe tener extensión .csv.";
+                return;
+            }
+
+            using Stream stream = archivo.OpenReadStream(maxAllowedSize: 1024 * 1024);
+            using StreamReader reader = new StreamReader(stream);
+
+            string contenidoCsv = await reader.ReadToEndAsync();
+
+            resultado = ImportacionService.ImportarEquipos(usuarioActual, contenidoCsv);
+
+            if (resultado.FueExitosa)
+            {
+                mensajeExito = $"Se importaron {resultado.CantidadImportada} equipos correctamente.";
+            }
+            else
+            {
+                mensajeError = "La importación no se pudo completar porque el archivo contiene errores.";
+            }
+        }
+        catch (InvalidOperationException ex)
+        {
+            mensajeError = ex.Message;
+        }
+        catch (Exception)
+        {
+            mensajeError = "Ocurrió un error inesperado al importar el archivo.";
+        }
+    }
+}
+

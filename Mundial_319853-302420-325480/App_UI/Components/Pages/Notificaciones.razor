@@ -1,0 +1,176 @@
+﻿@page "/notificaciones"
+@using DTOs
+@using Services.Interfaces
+
+@inject ISesionService SesionService
+@inject INotificacionService NotificacionService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Notificaciones</PageTitle>
+
+<div class="container mt-4">
+        <h1>Notificaciones</h1>
+        @if (usuarioActual != null && esPeriodista && notificaciones != null && notificaciones.Any())
+        {
+            <button class="btn btn-info text-white shadow-sm" type="button" @onclick="MarcarTodasComoLeidas">
+                <i class="bi bi-check-all"></i> Marcar Todo como Leído
+            </button>
+        }
+    </div>
+
+    @if (!string.IsNullOrEmpty(mensajeError))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @mensajeError
+            <button type="button" class="btn-close" @onclick="() => mensajeError = null" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(mensajeExito))
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @mensajeExito
+            <button type="button" class="btn-close" @onclick="() => mensajeExito = null" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (usuarioActual == null)
+    {
+        <div class="alert alert-warning shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> Debes iniciar sesión para ver tus notificaciones.
+        </div>
+    }
+    else if (!esPeriodista)
+    {
+        <div class="alert alert-info shadow-sm" role="alert">
+            <i class="bi bi-info-circle-fill me-2"></i> Solo los periodistas tienen acceso al sistema de notificaciones.
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Bandeja de Actualizaciones Deportivas</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 65%;">Mensaje Informativo</th>
+                                <th style="width: 20%;">Fecha / Hora</th>
+                                <th style="width: 15%;" class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (notificaciones == null || !notificaciones.Any())
+                            {
+                                <tr>
+                                    <td colspan="3" class="text-center py-5 text-muted">
+                                        <i class="bi bi-bell-slash fs-2 d-block mb-2 text-secondary"></i>
+                                        No tienes notificaciones pendientes de lectura.
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var notificacion in notificaciones)
+                                {
+                                    <tr>
+                                        <td class="align-middle fw-bold text-dark">
+                                            @notificacion.Mensaje
+                                        </td>
+                                        <td class="align-middle text-muted">
+                                            @notificacion.Fecha.ToString("yyyy-MM-dd HH:mm")
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            <button class="btn btn-sm btn-outline-primary" 
+                                                    @onclick="() => MarcarComoLeida(notificacion.Id)">
+                                                Marcar como leída
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+
+@code {
+    private List<NotificacionDto> notificaciones = new();
+    private string? mensajeError;
+    private string? mensajeExito;
+    private UsuarioReadDto? usuarioActual;
+
+    private bool esPeriodista => usuarioActual?.EsPeriodista == true;
+
+    protected override void OnInitialized()
+    {
+        usuarioActual = SesionService.ObtenerUsuarioActual();
+
+        if (usuarioActual == null)
+        {
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+
+        if (esPeriodista)
+        {
+            CargarNotificaciones();
+        }
+    }
+
+    private void CargarNotificaciones()
+    {
+        try
+        {
+            if (usuarioActual != null && esPeriodista)
+            {
+                notificaciones = NotificacionService.ObtenerNoLeidasPorUsuario(usuarioActual.Correo) ?? new();
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeError = ex.Message;
+        }
+    }
+
+    private void MarcarComoLeida(int notificacionId)
+    {
+        mensajeError = null;
+        mensajeExito = null;
+        try
+        {
+            NotificacionService.MarcarLeida(notificacionId);
+            mensajeExito = "Notificación archivada.";
+            CargarNotificaciones();
+        }
+        catch (Exception ex)
+        {
+            mensajeError = ex.Message;
+        }
+    }
+
+    private void MarcarTodasComoLeidas()
+    {
+        mensajeError = null;
+        mensajeExito = null;
+        try
+        {
+            if (usuarioActual != null)
+            {
+                NotificacionService.MarcarTodasLeidas(usuarioActual.Correo);
+                mensajeExito = "Todas las notificaciones se marcaron como leídas.";
+                CargarNotificaciones();
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeError = ex.Message;
+        }
+    }
+}

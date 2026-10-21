@@ -1,0 +1,82 @@
+@inherits LayoutComponentBase
+@using Services.Interfaces
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject ISesionService SesionService
+@inject ProtectedSessionStorage SesionStorage
+@inject NavigationManager Nav
+
+@if (!sesionRestaurada)
+{
+    <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+        </div>
+    </div>
+}
+else
+{
+    <div class="page">
+        @if (EstaLogueado)
+        {
+            <div class="sidebar">
+                <NavMenu />
+            </div>
+        }
+
+        <main>
+            @if (EstaLogueado)
+            {
+                <div class="top-row px-4">
+                </div>
+            }
+
+            <article class="content px-4">
+                @Body
+            </article>
+        </main>
+    </div>
+}
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">x</a>
+</div>
+
+@code {
+    public const string ClaveCorreoSesion = "correoSesion";
+
+    private bool sesionRestaurada;
+
+    private bool EstaLogueado => SesionService.ObtenerUsuarioActual() != null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Tras un refresh el circuito se reinicia y la sesión en memoria se pierde.
+        // Si hay un correo persistido en el navegador, se restaura antes de renderizar
+        // las páginas (que verifican la sesión en su inicialización).
+        if (SesionService.ObtenerUsuarioActual() == null)
+        {
+            try
+            {
+                var resultado = await SesionStorage.GetAsync<string>(ClaveCorreoSesion);
+                if (resultado.Success && !string.IsNullOrWhiteSpace(resultado.Value))
+                {
+                    SesionService.RestaurarSesion(resultado.Value);
+                }
+            }
+            catch
+            {
+                // Si el storage no está disponible, se continúa sin sesión restaurada.
+            }
+        }
+
+        sesionRestaurada = true;
+
+        // Al iniciar el circuito (carga inicial o refresh) con sesión activa, se lleva al home.
+        if (EstaLogueado)
+        {
+            Nav.NavigateTo("/home");
+        }
+    }
+}

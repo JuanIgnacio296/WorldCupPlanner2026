@@ -1,0 +1,27 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=4c65fedc_002Df418_002D44ec_002Dae48_002D658ce4a8bf68/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CreateNewUser_WhenNombreIsEmpty_ThenThrowsException" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.UsuarioTests.CreateNewUser_WhenNombreIsEmpty_ThenThrowsException&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.PartidoTests.CreateFirstPartido_ShouldIdBe1&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e7513e1c_002D7e5c_002D45aa_002Db17b_002Dc46466df3003/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="CreateNewUser_WhenNombreIsEmpty_ThenThrowsException #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.UsuarioTests.CreateNewUser_WhenNombreIsEmpty_ThenThrowsException&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.UsuarioTests.CreateNewUser_WhenApellidoIsEmpty_ThenThrowsException&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.UsuarioTests.CreateUser_WhenEmailIsEmpty_ThenThrowsException&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.UsuarioTests.CreateUser_WhenPasswordIsEmpty_ThenThrowsException&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.UsuarioTests.CreateUser_WhenPasswordIsLessThan8Characters_ThenThrowsException&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.UsuarioTests.CreateNewUser_WhenNombreContainsSpecialCharacters_ThenThrowsException&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.UsuarioTests.CreateNewUser_WithValidData_ShouldIntegrateCorrectly&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.UsuarioTests.CreateNewUser_WhenApellidoContainsSpecialCharacters_ThenThrowsException&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.UsuarioTests.CreateUser_WhenEmailFormatIsInvalid_ThenThrowsException&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.UsuarioTests.CreateUser_WithVariousInvalidEmails_ThenThrowsException&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.UsuarioTests.CreateUser_WhenPasswordMissingSpecialChar_ThenThrowsException&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.UsuarioTests.CreateUser_WhenPasswordMissingNumber_ThenThrowsException&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.UsuarioTests.CreateUser_WhenPasswordMissingUpperCase_ThenThrowsException&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.UsuarioTests.CreateUser_WhenPasswordMissingLowerCase_ThenThrowsException&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.UsuarioTests.CreateUser_WhenFechaNacimientoIsAfterToday_ThenThrowsException&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.PartidoTests.CreateFirstPartido_ShouldIdBe1&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

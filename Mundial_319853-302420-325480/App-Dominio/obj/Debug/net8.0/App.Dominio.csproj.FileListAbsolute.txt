@@ -1,0 +1,36 @@
+C:\Users\juanf\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\Documentos\Programacion\Diseño de app 1\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\bin\Debug\net8.0\App.Dominio.deps.json
+C:\Users\juanf\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\Documentos\Programacion\Diseño de app 1\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\bin\Debug\net8.0\App.Dominio.dll
+C:\Users\juanf\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\Documentos\Programacion\Diseño de app 1\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\bin\Debug\net8.0\App.Dominio.pdb
+C:\Users\juanf\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\Documentos\Programacion\Diseño de app 1\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\obj\Debug\net8.0\App.Dominio.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\juanf\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\Documentos\Programacion\Diseño de app 1\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\obj\Debug\net8.0\App.Dominio.AssemblyInfoInputs.cache
+C:\Users\juanf\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\Documentos\Programacion\Diseño de app 1\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\obj\Debug\net8.0\App.Dominio.AssemblyInfo.cs
+C:\Users\juanf\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\Documentos\Programacion\Diseño de app 1\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\obj\Debug\net8.0\App.Dominio.csproj.CoreCompileInputs.cache
+C:\Users\juanf\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\Documentos\Programacion\Diseño de app 1\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\obj\Debug\net8.0\App.Dominio.sourcelink.json
+C:\Users\juanf\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\Documentos\Programacion\Diseño de app 1\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\obj\Debug\net8.0\App.Dominio.dll
+C:\Users\juanf\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\Documentos\Programacion\Diseño de app 1\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\obj\Debug\net8.0\refint\App.Dominio.dll
+C:\Users\juanf\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\Documentos\Programacion\Diseño de app 1\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\obj\Debug\net8.0\App.Dominio.pdb
+C:\Users\juanf\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\Documentos\Programacion\Diseño de app 1\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\obj\Debug\net8.0\ref\App.Dominio.dll
+C:\Users\Usuario\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\Documentos\Programacion\Diseño de app 1\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\bin\Debug\net8.0\App.Dominio.deps.json
+C:\Users\Usuario\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\Documentos\Programacion\Diseño de app 1\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\bin\Debug\net8.0\App.Dominio.dll
+C:\Users\Usuario\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\Documentos\Programacion\Diseño de app 1\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\bin\Debug\net8.0\App.Dominio.pdb
+C:\Users\Usuario\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\Documentos\Programacion\Diseño de app 1\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\obj\Debug\net8.0\App.Dominio.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Usuario\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\Documentos\Programacion\Diseño de app 1\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\obj\Debug\net8.0\App.Dominio.AssemblyInfoInputs.cache
+C:\Users\Usuario\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\Documentos\Programacion\Diseño de app 1\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\obj\Debug\net8.0\App.Dominio.AssemblyInfo.cs
+C:\Users\Usuario\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\Documentos\Programacion\Diseño de app 1\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\obj\Debug\net8.0\App.Dominio.csproj.CoreCompileInputs.cache
+C:\Users\Usuario\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\Documentos\Programacion\Diseño de app 1\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\obj\Debug\net8.0\App.Dominio.sourcelink.json
+C:\Users\Usuario\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\Documentos\Programacion\Diseño de app 1\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\obj\Debug\net8.0\App.Dominio.dll
+C:\Users\Usuario\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\Documentos\Programacion\Diseño de app 1\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\obj\Debug\net8.0\refint\App.Dominio.dll
+C:\Users\Usuario\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\Documentos\Programacion\Diseño de app 1\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\obj\Debug\net8.0\App.Dominio.pdb
+C:\Users\Usuario\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\Documentos\Programacion\Diseño de app 1\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\obj\Debug\net8.0\ref\App.Dominio.dll
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\bin\Debug\net8.0\App.Dominio.deps.json
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\bin\Debug\net8.0\App.Dominio.dll
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\bin\Debug\net8.0\App.Dominio.pdb
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\obj\Debug\net8.0\App.Dominio.GeneratedMSBuildEditorConfig.editorconfig
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\obj\Debug\net8.0\App.Dominio.AssemblyInfoInputs.cache
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\obj\Debug\net8.0\App.Dominio.AssemblyInfo.cs
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\obj\Debug\net8.0\App.Dominio.csproj.CoreCompileInputs.cache
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\obj\Debug\net8.0\App.Dominio.sourcelink.json
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\obj\Debug\net8.0\App.Dominio.dll
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\obj\Debug\net8.0\refint\App.Dominio.dll
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\obj\Debug\net8.0\App.Dominio.pdb
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\App.Dominio\obj\Debug\net8.0\ref\App.Dominio.dll

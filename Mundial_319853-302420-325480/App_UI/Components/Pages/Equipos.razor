@@ -1,0 +1,427 @@
+@page "/equipos"
+@using DTOs
+@using Services.Interfaces
+@inject IEquipoService EquipoService
+@inject ISesionService SesionService
+@inject ISorteoService SorteoService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Gestión de Equipos</PageTitle>
+
+<div class="container mt-4">
+    <h1>Gestión de Equipos</h1>
+
+    @if (!string.IsNullOrEmpty(mensajeError))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @mensajeError
+            <button type="button" class="btn-close" @onclick="() => mensajeError = null" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(mensajeExito))
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @mensajeExito
+            <button type="button" class="btn-close" @onclick="() => mensajeExito = null" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (esAdmin)
+    {
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">@(editando ? "Modificar Equipo" : "Agregar Nuevo Equipo")</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" class="form-control" @bind="equipoForm.Nombre" placeholder="Nombre del equipo" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Confederación</label>
+                        <select class="form-select" @bind="equipoForm.Confederacion">
+                            <option value="">Seleccione una confederación...</option>
+                            @foreach (var conf in confederaciones)
+                            {
+                                <option value="@conf">@conf</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Ranking FIFA</label>
+                        <input type="number" class="form-control" @bind="equipoForm.RankingFIFA" min="300" max="2500" />
+                    </div>
+                    <div class="col-md-8">
+                        <label class="form-label">Bandera del país</label>
+                        <InputFile class="form-control"
+                                   OnChange="CargarBandera"
+                                   accept="image/*" />
+                        <div class="form-text">
+                            Seleccione una imagen. Se almacenará convertida a base64.
+                        </div>
+                        @if (TieneBandera(equipoForm.BanderaBase64))
+                        {
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-secondary mt-2"
+                                    @onclick="QuitarBandera">
+                                Quitar bandera
+                            </button>
+                        }
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label d-block">Vista previa</label>
+                        @if (TieneBandera(equipoForm.BanderaBase64))
+                        {
+                            <img src="@NormalizarBandera(equipoForm.BanderaBase64)"
+                                 alt="Vista previa de bandera"
+                                 class="border rounded"
+                                 style="width: 64px; height: 42px; object-fit: cover;" />
+                        }
+                        else
+                        {
+                            <span class="text-muted small">Sin bandera</span>
+                        }
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end gap-2">
+                        <button class="btn btn-success w-100" @onclick="GuardarEquipo">
+                            <i class="bi bi-save"></i> @(editando ? "Actualizar" : "Guardar")
+                        </button>
+                        @if (editando)
+                        {
+                            <button class="btn btn-secondary" @onclick="CancelarEdicion">Cancelar</button>
+                        }
+                    </div>
+                    <div>
+                        <label class="form-label">Agregar equipos restantes</label>
+                        <button type="button" class="btn btn-success" @onclick="CompletarEquipos">Agregar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Listado de Equipos</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Bandera</th>
+                            <th>Nombre</th>
+                            <th>Confederación</th>
+                            <th>Ranking FIFA</th>
+                            @if (esAdmin)
+                            {
+                                <th class="text-center">Acciones</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (equipos == null || !equipos.Any())
+                        {
+                            <tr>
+                                <td colspan="@(esAdmin ? 5 : 4)" class="text-center py-4 text-muted">
+                                    No hay equipos registrados.
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var equipo in equipos)
+                            {
+                                <tr>
+                                    <td class="align-middle">
+                                        @if (TieneBandera(equipo.BanderaBase64))
+                                        {
+                                            <img src="@NormalizarBandera(equipo.BanderaBase64)"
+                                                 alt="Bandera de @equipo.Nombre"
+                                                 class="border rounded"
+                                                 style="width: 42px; height: 28px; object-fit: cover;" />
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted small">Sin bandera</span>
+                                        }
+                                    </td>
+                                    <td class="align-middle">@equipo.Nombre</td>
+                                    <td class="align-middle">@equipo.Confederacion</td>
+                                    <td class="align-middle">@equipo.RankingFifa</td>
+                                    @if (esAdmin)
+                                    {
+                                        <td class="text-center align-middle">
+                                            <div class="btn-group" role="group">
+                                                <button class="btn btn-sm btn-outline-warning" @onclick="() => PrepararEdicion(equipo)">
+                                                    Modificar
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" @onclick="() => EliminarEquipo(equipo.Nombre)">
+                                                    Eliminar
+                                                </button>
+                                            </div>
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<EquipoReadDto> equipos = new();
+    private List<string> confederaciones = new List<string>() { "AFC", "CAF", "CONCACAF", "CONMEBOL", "OFC", "UEFA" };
+
+    private bool editando = false;
+    private string nombreOriginal = "";
+    private string? mensajeError;
+    private string? mensajeExito;
+    private UsuarioReadDto? usuarioActual;
+    private EquipoViewModel equipoForm = new();
+
+    private bool esAdmin => usuarioActual?.EsAdministrador == true;
+
+    protected override void OnInitialized()
+    {
+        usuarioActual = SesionService.ObtenerUsuarioActual();
+        if (usuarioActual == null ||
+            (!usuarioActual.EsAdministrador &&
+             !usuarioActual.EsPeriodista &&
+             !usuarioActual.EsEditor))
+        {
+            NavigationManager.NavigateTo("/home");
+            return;
+        }
+
+        CargarEquipos();
+    }
+
+    private void CargarEquipos()
+    {
+        equipos = EquipoService.ObtenerEquiposDetalle() ?? new();
+    }
+
+    private void GuardarEquipo()
+    {
+        mensajeError = null;
+        mensajeExito = null;
+
+        if (!esAdmin)
+        {
+            mensajeError = "Error: Su rol no tiene permisos para guardar o modificar equipos.";
+            return;
+        }
+        
+        try
+        {
+            if (usuarioActual == null)
+            {
+                mensajeError = "Debe iniciar sesión para realizar esta acción.";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(equipoForm.Nombre))
+            {
+                mensajeError = "El nombre es obligatorio.";
+                return;
+            }
+
+            if (string.IsNullOrEmpty(equipoForm.Confederacion))
+            {
+                mensajeError = "La confederación es obligatoria.";
+                return;
+            }
+
+            if (editando)
+            {
+                EquipoUpdateDto modificado = new EquipoUpdateDto
+                {
+                    Nombre = equipoForm.Nombre,
+                    Confederacion = equipoForm.Confederacion,
+                    RankingFifa = equipoForm.RankingFIFA,
+                    BanderaBase64 = ExtraerBase64(equipoForm.BanderaBase64)
+                };
+                EquipoService.ModificarEquipo(usuarioActual, nombreOriginal, modificado);
+                mensajeExito = $"Equipo '{equipoForm.Nombre}' actualizado correctamente.";
+            }
+            else
+            {
+                EquipoCreateDto nuevo = new EquipoCreateDto
+                {
+                    Nombre = equipoForm.Nombre,
+                    Confederacion = equipoForm.Confederacion,
+                    RankingFifa = equipoForm.RankingFIFA,
+                    BanderaBase64 = ExtraerBase64(equipoForm.BanderaBase64)
+                };
+                EquipoService.CrearEquipo(usuarioActual, nuevo);
+                mensajeExito = $"Equipo '{equipoForm.Nombre}' creado correctamente.";
+            }
+
+            LimpiarFormulario();
+            CargarEquipos();
+        }
+        catch (Exception ex)
+        {
+            mensajeError = ex.Message;
+        }
+    }
+
+    private void PrepararEdicion(EquipoReadDto equipo)
+    {
+        equipoForm = new EquipoViewModel
+        {
+            Nombre = equipo.Nombre,
+            Confederacion = equipo.Confederacion,
+            RankingFIFA = equipo.RankingFifa,
+            BanderaBase64 = equipo.BanderaBase64
+        };
+        nombreOriginal = equipo.Nombre;
+        editando = true;
+        mensajeError = null;
+        mensajeExito = null;
+    }
+
+    private void CancelarEdicion()
+    {
+        LimpiarFormulario();
+        mensajeError = null;
+        mensajeExito = null;
+    }
+
+    private void EliminarEquipo(string nombre)
+    {
+        mensajeError = null;
+        mensajeExito = null;
+
+        try
+        {
+            if (usuarioActual == null)
+            {
+                mensajeError = "Debe iniciar sesión para realizar esta acción.";
+                return;
+            }
+
+            EquipoService.EliminarEquipo(usuarioActual, nombre);
+            mensajeExito = $"Equipo '{nombre}' eliminado correctamente.";
+            CargarEquipos();
+            
+            if (editando && nombreOriginal == nombre)
+            {
+                LimpiarFormulario();
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeError = ex.Message;
+        }
+    }
+
+    private void LimpiarFormulario()
+    {
+        equipoForm = new EquipoViewModel();
+        editando = false;
+        nombreOriginal = "";
+    }
+
+    private async Task CargarBandera(InputFileChangeEventArgs evento)
+    {
+        mensajeError = null;
+        mensajeExito = null;
+
+        IBrowserFile archivo = evento.File;
+
+        if (!archivo.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+        {
+            mensajeError = "La bandera debe ser un archivo de imagen.";
+            return;
+        }
+
+        const long maximoBytes = 2 * 1024 * 1024;
+        if (archivo.Size > maximoBytes)
+        {
+            mensajeError = "La imagen de la bandera no puede superar 2 MB.";
+            return;
+        }
+
+        using MemoryStream memoria = new MemoryStream();
+        await archivo.OpenReadStream(maximoBytes).CopyToAsync(memoria);
+
+        equipoForm.BanderaBase64 = Convert.ToBase64String(memoria.ToArray());
+    }
+
+    private void QuitarBandera()
+    {
+        equipoForm.BanderaBase64 = "";
+        mensajeError = null;
+        mensajeExito = null;
+    }
+    
+    private void CompletarEquipos()
+    {
+        mensajeError = null;
+        mensajeExito = null;
+
+        try
+        {
+            if (usuarioActual == null)
+            {
+                mensajeError = "Debe ser administrador para completar equipos.";
+                return;
+            }
+
+            EquipoService.CompletarEquiposFaltantes(usuarioActual);
+        
+            mensajeExito = "Se han generado los equipos faltantes siguiendo los cupos por confederación.";
+        
+            CargarEquipos();
+        }
+        catch (Exception ex)
+        {
+            mensajeError = ex.Message;
+        }
+    }
+
+    public class EquipoViewModel
+    {
+        public string Nombre { get; set; } = "";
+        public string? Confederacion { get; set; }
+        public int RankingFIFA { get; set; } = 300;
+        public string BanderaBase64 { get; set; } = "";
+    }
+
+    private static bool TieneBandera(string? banderaBase64)
+    {
+        return !string.IsNullOrWhiteSpace(banderaBase64);
+    }
+
+    private static string NormalizarBandera(string banderaBase64)
+    {
+        if (banderaBase64.StartsWith("data:", StringComparison.OrdinalIgnoreCase))
+        {
+            return banderaBase64;
+        }
+
+        return $"data:image/png;base64,{banderaBase64}";
+    }
+
+    private static string ExtraerBase64(string banderaBase64)
+    {
+        int separador = banderaBase64.IndexOf(",", StringComparison.Ordinal);
+
+        if (banderaBase64.StartsWith("data:", StringComparison.OrdinalIgnoreCase) && separador >= 0)
+        {
+            return banderaBase64[(separador + 1)..];
+        }
+
+        return banderaBase64;
+    }
+
+    
+}

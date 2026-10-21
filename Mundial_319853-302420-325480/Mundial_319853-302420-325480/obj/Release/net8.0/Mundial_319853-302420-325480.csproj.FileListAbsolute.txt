@@ -1,0 +1,15 @@
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\Mundial_319853-302420-325480\bin\Release\net8.0\Mundial_319853-302420-325480.exe
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\Mundial_319853-302420-325480\bin\Release\net8.0\Mundial_319853-302420-325480.deps.json
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\Mundial_319853-302420-325480\bin\Release\net8.0\Mundial_319853-302420-325480.runtimeconfig.json
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\Mundial_319853-302420-325480\bin\Release\net8.0\Mundial_319853-302420-325480.dll
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\Mundial_319853-302420-325480\bin\Release\net8.0\Mundial_319853-302420-325480.pdb
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\Mundial_319853-302420-325480\obj\Release\net8.0\Mundial_319853-302420-325480.GeneratedMSBuildEditorConfig.editorconfig
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\Mundial_319853-302420-325480\obj\Release\net8.0\Mundial_319853-302420-325480.AssemblyInfoInputs.cache
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\Mundial_319853-302420-325480\obj\Release\net8.0\Mundial_319853-302420-325480.AssemblyInfo.cs
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\Mundial_319853-302420-325480\obj\Release\net8.0\Mundial_319853-302420-325480.csproj.CoreCompileInputs.cache
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\Mundial_319853-302420-325480\obj\Release\net8.0\Mundial_319853-302420-325480.sourcelink.json
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\Mundial_319853-302420-325480\obj\Release\net8.0\Mundial_319853-302420-325480.dll
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\Mundial_319853-302420-325480\obj\Release\net8.0\refint\Mundial_319853-302420-325480.dll
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\Mundial_319853-302420-325480\obj\Release\net8.0\Mundial_319853-302420-325480.pdb
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\Mundial_319853-302420-325480\obj\Release\net8.0\Mundial_319853-302420-325480.genruntimeconfig.cache
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\Mundial_319853-302420-325480\obj\Release\net8.0\ref\Mundial_319853-302420-325480.dll

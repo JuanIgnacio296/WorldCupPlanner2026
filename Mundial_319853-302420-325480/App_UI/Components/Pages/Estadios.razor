@@ -1,0 +1,338 @@
+@page "/estadios"
+@using DTOs
+@using Services.Interfaces
+@inject IEstadioService EstadioService
+@inject ISesionService SesionService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+@if (esAdmin)
+{
+    <PageTitle>Gestión de Estadios</PageTitle>
+
+    <div class="container mt-4">
+        <h1>Gestión de Estadios</h1>
+
+        @if (!string.IsNullOrEmpty(mensajeError))
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @mensajeError
+                <button type="button" class="btn-close" @onclick="() => mensajeError = null" aria-label="Close"></button>
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(mensajeExito))
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @mensajeExito
+                <button type="button" class="btn-close" @onclick="() => mensajeExito = null" aria-label="Close"></button>
+            </div>
+        }
+
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">@(editando ? "Modificar Estadio" : "Agregar Nuevo Estadio")</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" class="form-control" @bind="estadioForm.Nombre" placeholder="Nombre del estadio" maxlength="80" />
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Ciudad</label>
+                        <input type="text" class="form-control" @bind="estadioForm.Ciudad" placeholder="Ciudad" maxlength="60" />
+                    </div>
+
+                    <div class="col-md-2">
+                        <label class="form-label">Capacidad</label>
+                        <input type="number" class="form-control" @bind="estadioForm.Capacidad" min="20000" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Descripción</label>
+                        <input type="text" class="form-control" @bind="estadioForm.Descripcion" placeholder="Descripción del estadio" maxlength="400" />
+                    </div>
+
+                    <div class="col-12 d-flex justify-content-end gap-2">
+                        <button class="btn btn-success" @onclick="GuardarEstadio">
+                            <i class="bi bi-save"></i> @(editando ? "Actualizar" : "Guardar")
+                        </button>
+
+                        @if (editando)
+                        {
+                            <button class="btn btn-secondary" @onclick="CancelarEdicion">
+                                Cancelar
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0">Estadios registrados: @estadios.Count</h5>
+
+            <button class="btn btn-outline-primary" @onclick="CompletarEstadiosMinimosParaFixture">
+                Completar estadios mínimos para fixture
+            </button>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Listado de Estadios</h5>
+            </div>
+
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Ciudad</th>
+                                <th>Capacidad</th>
+                                <th>Descripción</th>
+                                @if (esAdmin)
+                                {
+                                    <th class="text-center">Acciones</th>
+                                }
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @if (estadios == null || !estadios.Any())
+                            {
+                                <tr>
+                                    <td colspan="@(esAdmin ? 5 : 4)" class="text-center py-4 text-muted">
+                                        No hay estadios registrados.
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var estadio in estadios)
+                                {
+                                    <tr>
+                                        <td class="align-middle">@estadio.Nombre</td>
+                                        <td class="align-middle">@estadio.Ciudad</td>
+                                        <td class="align-middle">@estadio.Capacidad</td>
+                                        <td class="align-middle">@estadio.Descripcion</td>
+
+                                        @if (esAdmin)
+                                        {
+                                            <td class="text-center align-middle">
+                                                <div class="btn-group" role="group">
+                                                    <button class="btn btn-sm btn-outline-warning" @onclick="() => PrepararEdicion(estadio)">
+                                                        Modificar
+                                                    </button>
+
+                                                    <button class="btn btn-sm btn-outline-danger" @onclick="() => EliminarEstadio(estadio.Nombre)">
+                                                        Eliminar
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<EstadioReadDto> estadios = new();
+
+    private bool editando = false;
+    private string nombreOriginal = "";
+    private string? mensajeError;
+    private string? mensajeExito;
+    private UsuarioReadDto? usuarioActual;
+    private EstadioViewModel estadioForm = new();
+
+    private bool esAdmin => usuarioActual?.EsAdministrador == true;
+
+    protected override void OnInitialized()
+    {
+        usuarioActual = SesionService.ObtenerUsuarioActual();
+        CargarEstadios();
+    }
+
+    private void CargarEstadios()
+    {
+        estadios = EstadioService.ObtenerEstadiosDetalle() ?? new();
+    }
+
+    private void GuardarEstadio()
+    {
+        mensajeError = null;
+        mensajeExito = null;
+
+        try
+        {
+            if (usuarioActual == null)
+            {
+                mensajeError = "Debe iniciar sesión para realizar esta acción.";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(estadioForm.Nombre))
+            {
+                mensajeError = "El nombre es obligatorio.";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(estadioForm.Ciudad))
+            {
+                mensajeError = "La ciudad es obligatoria.";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(estadioForm.Descripcion))
+            {
+                mensajeError = "La descripción es obligatoria.";
+                return;
+            }
+
+            if (editando)
+            {
+                EstadioUpdateDto modificado = new EstadioUpdateDto
+                {
+                    Nombre = estadioForm.Nombre,
+                    Ciudad = estadioForm.Ciudad,
+                    Capacidad = estadioForm.Capacidad,
+                    Descripcion = estadioForm.Descripcion
+                };
+                EstadioService.ModificarEstadio(usuarioActual, nombreOriginal, modificado);
+                mensajeExito = $"Estadio '{estadioForm.Nombre}' actualizado correctamente.";
+            }
+            else
+            {
+                EstadioCreateDto nuevo = new EstadioCreateDto
+                {
+                    Nombre = estadioForm.Nombre,
+                    Ciudad = estadioForm.Ciudad,
+                    Capacidad = estadioForm.Capacidad,
+                    Descripcion = estadioForm.Descripcion
+                };
+                EstadioService.CrearEstadio(usuarioActual, nuevo);
+                mensajeExito = $"Estadio '{estadioForm.Nombre}' creado correctamente.";
+            }
+
+            LimpiarFormulario();
+            CargarEstadios();
+        }
+        catch (Exception ex)
+        {
+            mensajeError = ex.Message;
+        }
+    }
+
+    private void CompletarEstadiosMinimosParaFixture()
+    {
+        mensajeError = null;
+        mensajeExito = null;
+
+        try
+        {
+            if (usuarioActual == null)
+            {
+                mensajeError = "Debe iniciar sesión para realizar esta acción.";
+                return;
+            }
+
+            int cantidadAntes = EstadioService.ObtenerEstadiosDetalle().Count;
+
+            EstadioService.CompletarEstadiosMinimosParaFixture(usuarioActual);
+
+            CargarEstadios();
+
+            int cantidadDespues = estadios.Count;
+            int cantidadCreados = cantidadDespues - cantidadAntes;
+
+            if (cantidadCreados == 0)
+            {
+                mensajeExito = "Ya existen al menos 4 estadios para generar el fixture.";
+            }
+            else
+            {
+                mensajeExito = $"Se completaron los estadios mínimos para fixture. Se crearon {cantidadCreados} estadio(s).";
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeError = ex.Message;
+        }
+    }
+
+    private void PrepararEdicion(EstadioReadDto estadio)
+    {
+        estadioForm = new EstadioViewModel
+        {
+            Nombre = estadio.Nombre,
+            Ciudad = estadio.Ciudad,
+            Capacidad = estadio.Capacidad,
+            Descripcion = estadio.Descripcion
+        };
+
+        nombreOriginal = estadio.Nombre;
+        editando = true;
+        mensajeError = null;
+        mensajeExito = null;
+    }
+
+    private void CancelarEdicion()
+    {
+        LimpiarFormulario();
+        mensajeError = null;
+        mensajeExito = null;
+    }
+
+    private void EliminarEstadio(string nombre)
+    {
+        mensajeError = null;
+        mensajeExito = null;
+
+        try
+        {
+            if (usuarioActual == null)
+            {
+                mensajeError = "Debe iniciar sesión para realizar esta acción.";
+                return;
+            }
+
+            EstadioService.EliminarEstadio(usuarioActual, nombre);
+            mensajeExito = $"Estadio '{nombre}' eliminado correctamente.";
+            CargarEstadios();
+
+            if (editando && nombreOriginal == nombre)
+            {
+                LimpiarFormulario();
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeError = ex.Message;
+        }
+    }
+
+    private void LimpiarFormulario()
+    {
+        estadioForm = new EstadioViewModel();
+        editando = false;
+        nombreOriginal = "";
+    }
+
+    public class EstadioViewModel
+    {
+        public string Nombre { get; set; } = "";
+        public string Ciudad { get; set; } = "";
+        public int Capacidad { get; set; } = 20000;
+        public string Descripcion { get; set; } = "";
+    }
+}
+

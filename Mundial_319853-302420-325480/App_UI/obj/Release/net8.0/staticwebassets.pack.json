@@ -1,0 +1,41 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\ProgramacionC\\ObligatorioDA1-319853-302420-325480\\Mundial_319853-302420-325480\\App_UI\\obj\\Release\\net8.0\\scopedcss\\projectbundle\\App_UI.bundle.scp.css",
+      "PackagePath": "staticwebassets\\App_UI.bundle.scp.css"
+    },
+    {
+      "Id": "C:\\ProgramacionC\\ObligatorioDA1-319853-302420-325480\\Mundial_319853-302420-325480\\App_UI\\wwwroot\\app.css",
+      "PackagePath": "staticwebassets\\app.css"
+    },
+    {
+      "Id": "C:\\ProgramacionC\\ObligatorioDA1-319853-302420-325480\\Mundial_319853-302420-325480\\App_UI\\wwwroot\\bootstrap\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css"
+    },
+    {
+      "Id": "C:\\ProgramacionC\\ObligatorioDA1-319853-302420-325480\\Mundial_319853-302420-325480\\App_UI\\wwwroot\\bootstrap\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "C:\\ProgramacionC\\ObligatorioDA1-319853-302420-325480\\Mundial_319853-302420-325480\\App_UI\\wwwroot\\favicon.png",
+      "PackagePath": "staticwebassets\\favicon.png"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\staticwebassets\\msbuild.App_UI.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\staticwebassets\\msbuild.build.App_UI.props",
+      "PackagePath": "build\\App_UI.props"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.App_UI.props",
+      "PackagePath": "buildMultiTargeting\\App_UI.props"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\staticwebassets\\msbuild.buildTransitive.App_UI.props",
+      "PackagePath": "buildTransitive\\App_UI.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

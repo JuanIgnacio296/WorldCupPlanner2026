@@ -1,0 +1,73 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003ADbContext_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003F_002E_002E_003FUsers_003Fjuanf_003FAppData_003FRoaming_003FJetBrains_003FRider2025_002E3_003Fresharper_002Dhost_003FSourcesCache_003F3bd4df5aff92cabbc4d630be64227073db1b8539b3a1e47786b4b189d7cdb7_003FDbContext_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003ADbSet_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003F_002E_002E_003FUsers_003Fjuanf_003FAppData_003FRoaming_003FJetBrains_003FRider2025_002E3_003Fresharper_002Dhost_003FSourcesCache_003F4b21fc3f8a3abb5d25f06c622276fbec0fd3932f169cc6af520bf5abc6a46b4_003FDbSet_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AVoid_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003F_002E_002E_003FUsers_003Fjuanf_003FAppData_003FRoaming_003FJetBrains_003FRider2025_002E3_003Fresharper_002Dhost_003FSourcesCache_003F376e9cf87e9f457a80b9fd19d675c52dc90930_003F_005Fe67e6_003FVoid_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AVoid_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003F_002E_002E_003F_002E_002E_003F_002E_002E_003F_002E_002E_003FAppData_003FRoaming_003FJetBrains_003FRider2026_002E1_003Fresharper_002Dhost_003FSourcesCache_003F376e9cf87e9f457a80b9fd19d675c52dc90930_003F_005Fe67e6_003FVoid_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
+	<s:String x:Key="/Default/dotCover/Editor/HighlightingSourceSnapshotLocation/@EntryValue">C:\Users\juanf\AppData\Local\JetBrains\Rider2025.3\resharper-host\temp\Rider\vAny\CoverageData\_Mundial_319853-302420-325480.-507356518\Snapshot\snapshot.utdcvr</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=01c581ec_002D4697_002D4997_002Db6fe_002D079f37ccf567/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="AgregarEquipo_DeberiaGuardarEquipoEnBaseDeDatos" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;MSTest::404E591B-B1FD-4E4D-A74F-91FF86C60C88::net8.0::DataAccess.Tests.EquipoEFRepositoryTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::404E591B-B1FD-4E4D-A74F-91FF86C60C88::net8.0::DataAccess.Tests.EstadioEFRepositoryTests.AgregarEstadio_DeberiaAumentarCantidadEstadios&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::404E591B-B1FD-4E4D-A74F-91FF86C60C88::net8.0::DataAccess.Tests.EstadioEFRepositoryTests.ObtenerEstadios_DeberiaObtenerTodosLosEstadios&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::404E591B-B1FD-4E4D-A74F-91FF86C60C88::net8.0::DataAccess.Tests.EstadioEFRepositoryTests.ObtenerEstadio_DeberiaObtenerElEstadioIdicado&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::404E591B-B1FD-4E4D-A74F-91FF86C60C88::net8.0::DataAccess.Tests.EstadioEFRepositoryTests.ObtenerEstadio_SiNoHayEstadiosDeberiaDevolverNull&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::404E591B-B1FD-4E4D-A74F-91FF86C60C88::net8.0::DataAccess.Tests.EstadioEFRepositoryTests.ObtenerEstadio_NoEstaEstadioDeberiaDevolverNull&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::404E591B-B1FD-4E4D-A74F-91FF86C60C88::net8.0::DataAccess.Tests.EstadioEFRepositoryTests.ExisteEstadio_SiEstaDaTrue&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::404E591B-B1FD-4E4D-A74F-91FF86C60C88::net8.0::DataAccess.Tests.EstadioEFRepositoryTests.ExisteEstadio_SiNoEstaDaFalse&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::404E591B-B1FD-4E4D-A74F-91FF86C60C88::net8.0::DataAccess.Tests.EstadioEFRepositoryTests.EliminarEstadio_SiEstaLaCantidadDisminuye&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::404E591B-B1FD-4E4D-A74F-91FF86C60C88::net8.0::DataAccess.Tests.EstadioEFRepositoryTests.EliminarEstadio_SiNoEstaMantieneLaCantidad&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=0e9b2756_002Df36f_002D4c76_002Dbf56_002D27ed24e45639/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CreatePartido_ShouldAssignIncrementalId #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.PartidoTests.CreatePartido_ShouldAssignIncrementalId&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.PartidoTests.Vencedor_ShouldBeEquipoLocal_WhenGolesLocalIsGreater&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.PartidoTests.Vencedor_ShouldBeEquipoVisitante_WhenGolesLocalIsLess&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.PartidoTests.Vencedor_ShouldBeEmpate_WhenGolesLocalesSameAsGolesVis&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.PartidoTests.CreatePartido_WhenEquiposAreEqual_ThrowsException&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.PartidoTests.SetGoles_WhenValueIsNegative_ThrowsException&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.PartidoTests.CreatePartido_WhenFaseIsInvalid_ThrowsException&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.PartidoTests.CreatePartido_WithValidData_ShouldIntegrateCorrectly&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.PartidoTests.SetJornada_WhenValueIsNegative_ThrowsException&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.PartidoTests.SetHorario_WhenValueIsEmpty_ThrowsException&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.PartidoTests.SetHorario_WhenValueisInvalid_ThrowsException&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.PartidoTests.SetFecha_WhenFechaisNull_ThrowsException&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.PartidoTests.SetEstadio_WhenEstadioIsNull_ThrowsException&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.PartidoTests.SetEquipoLocal_WhenEquipoIsNull_ThrowsException&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.PartidoTests.SetEquipoVisitante_WhenEquipoIsNull_ThrowsException&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.PartidoTests.SetFase_WhenFaseIsNull_ThrowsException&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.PartidoTests.SetJornada_WhenJornadaIsNull_ThrowsException&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=19d7526b_002D3b54_002D4f03_002Db004_002Dc303309c2e0a/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Solution /&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=5cf2d1c0_002D9909_002D47b5_002Daf88_002D4d731409eb9d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Solution /&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=73ae9acc_002D36a9_002D4725_002Da648_002D1deaaac7320e/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="UsuarioTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.UsuarioTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.SorteoTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::CDB6A5EC-9366-4263-8E68-DEA111ADFF50::net8.0::App.Dominio.Tests.SemillaTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::2A597349-BE5C-40B5-8F7B-AFC765F095F6::net8.0::Services.Tests.AuditoriaServiceTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::2A597349-BE5C-40B5-8F7B-AFC765F095F6::net8.0::Services.Tests.EquipoServiceTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::2A597349-BE5C-40B5-8F7B-AFC765F095F6::net8.0::Services.Tests.EstadioServiceTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::2A597349-BE5C-40B5-8F7B-AFC765F095F6::net8.0::Services.Tests.FixtureServiceTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::2A597349-BE5C-40B5-8F7B-AFC765F095F6::net8.0::Services.Tests.SesionServiceTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::2A597349-BE5C-40B5-8F7B-AFC765F095F6::net8.0::Services.Tests.SorteoServiceTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;MSTest::2A597349-BE5C-40B5-8F7B-AFC765F095F6::net8.0::Services.Tests.UsuarioServiceTest&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=8db5f26d_002Def59_002D4259_002Da9e2_002D409364af1b7d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Solution /&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=99ae1e31_002Df3b3_002D4455_002Db9f3_002Ddae4652c6580/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Solution /&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=c311da8d_002D525d_002D4267_002Da312_002Dee89b1adfdf8/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from Solution #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Solution /&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=dffe18e5_002Dac58_002D4c88_002Da909_002D5df6d557c29c/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CreatePartido_ShouldAssignIncrementalId" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Solution /&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

@@ -1,0 +1,123 @@
+@page "/auditoria"
+@using DTOs
+@using Services.Interfaces
+@inject IAuditoriaService AuditoriaService
+@inject ISesionService SesionService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Auditoría</PageTitle>
+
+<div class="container mt-4">
+    <h1>Auditoría</h1>
+
+    @if (!string.IsNullOrEmpty(mensajeError))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @mensajeError
+            <button type="button" class="btn-close" @onclick="() => mensajeError = null" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (esAdmin)
+    {
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Listado de Auditoría</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Id</th>
+                                <th>Fecha</th>
+                                <th>Usuario</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (logs == null || !logs.Any())
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted">
+                                        No hay registros de auditoría.
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var log in logs)
+                                {
+                                    <tr>
+                                        <td class="align-middle">@log.Id</td>
+                                        <td class="align-middle">@log.Fecha.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                        <td class="align-middle">@MostrarUsuario(log.Usuario)</td>
+                                        <td class="align-middle">@log.Accion</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private List<LogReadDto> logs = new();
+
+    private string? mensajeError;
+    private UsuarioReadDto? usuarioActual;
+
+    private bool esAdmin => usuarioActual?.EsAdministrador == true;
+
+    protected override void OnInitialized()
+    {
+        usuarioActual = SesionService.ObtenerUsuarioActual();
+
+        if (usuarioActual == null)
+        {
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+
+        if (!esAdmin)
+        {
+            NavigationManager.NavigateTo("/home");
+            return;
+        }
+
+        CargarLogs();
+    }
+
+    private void CargarLogs()
+    {
+        mensajeError = null;
+
+        try
+        {
+                if (usuarioActual == null || !esAdmin)
+            {
+                mensajeError = "Solo administradores pueden ver auditoría.";
+                return;
+            }
+
+            logs = AuditoriaService
+                .ObtenerLogs(usuarioActual)
+                .OrderByDescending(log => log.Fecha)
+                .ToList();
+        }
+        catch (Exception ex)
+        {
+            mensajeError = ex.Message;
+        }
+    }
+
+    private static string MostrarUsuario(UsuarioReadDto usuario)
+    {
+        return $"{usuario.Nombre} {usuario.Apellido} ({usuario.Correo})";
+    }
+}
+

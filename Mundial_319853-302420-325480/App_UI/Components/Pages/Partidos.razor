@@ -1,0 +1,900 @@
+@page "/partidos"
+
+@using DTOs
+@using Services.Interfaces
+
+@inject IPartidoService PartidoService
+@inject IEstadioService EstadioService
+@inject ISesionService SesionService
+@inject IFixtureService FixtureService
+@inject NavigationManager NavigationManager
+
+@rendermode InteractiveServer
+
+<PageTitle>Partidos</PageTitle>
+
+<div class="container mt-4">
+    <h1>Partidos</h1>
+
+    @if (!string.IsNullOrEmpty(mensajeError))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @mensajeError
+            <button type="button" class="btn-close" @onclick="() => mensajeError = null" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(mensajeExito))
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @mensajeExito
+            <button type="button" class="btn-close" @onclick="() => mensajeExito = null" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (usuarioActual?.EsEditor == true && FixtureActual != null)
+    {
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body">
+                <h5 class="card-title mb-3">
+                    <i class="bi bi-controller me-2"></i>Simulación de Partidos
+                </h5>
+
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Simular Fecha</label>
+                        <InputDate class="form-control" @bind-Value="FechaSeleccionada" />
+
+                        <select class="form-select mt-2" @bind="HoraSeleccionada">
+                            <option value="14">14:00</option>
+                            <option value="18">18:00</option>
+                            <option value="22">22:00</option>
+                        </select>
+
+                        <button class="btn btn-primary mt-2 w-100" @onclick="SimularFecha">
+                            Simular Fecha
+                        </button>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Simular Jornada</label>
+
+                        <select class="form-select mt-2" @bind="JornadaSeleccionada">
+                            <option value="1">Jornada 1</option>
+                            <option value="2">Jornada 2</option>
+                            <option value="3">Jornada 3</option>
+                        </select>
+
+                        <button class="btn btn-primary mt-2 w-100" @onclick="SimularJornada">
+                            Simular Jornada
+                        </button>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Simular Fase</label>
+
+                        <select class="form-select mt-2" @bind="FaseSeleccionada">
+                            <option value="Fase de Grupos">Fase de Grupos</option>
+                            <option value="Dieciseisavos de Final">Dieciseisavos de Final</option>
+                            <option value="Octavos de Final">Octavos de Final</option>
+                            <option value="Cuartos de Final">Cuartos de Final</option>
+                            <option value="Semifinal">Semifinal</option>
+                            <option value="Tercer y Cuarto Puesto">Tercer y Cuarto Puesto</option>
+                            <option value="Final">Final</option>
+                        </select>
+
+                        <button class="btn btn-primary mt-2 w-100" @onclick="SimularFase">
+                            Simular Fase
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (!puedeGestionar)
+    {
+        <div class="alert alert-warning">
+            No tenés permisos para editar partidos.
+        </div>
+    }
+    else if (partidosVista.Count == 0)
+    {
+        <div class="alert alert-info">
+            No hay partidos cargados.
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">Filtros</h5>
+            </div>
+
+            <div class="card-body">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label">Fecha</label>
+                        <input class="form-control"
+                               type="date"
+                               @bind="fechaFiltro" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Estadio</label>
+                        <select class="form-select" @bind="estadioFiltro">
+                            <option value="">Todos los estadios</option>
+                            @foreach (EstadioReadDto estadio in estadios)
+                            {
+                                <option value="@estadio.Nombre">@estadio.Nombre</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Fase</label>
+                        <select class="form-select" @bind="faseFiltro">
+                            <option value="">Todas las fases</option>
+                            @foreach (string fase in fasesDisponibles)
+                            {
+                                <option value="@fase">@fase</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-2">
+                        <button class="btn btn-outline-secondary w-100"
+                                @onclick="LimpiarFiltros">
+                            Limpiar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mt-3 text-muted">
+                    Mostrando @partidosFiltrados.Count de @partidosVista.Count partidos.
+                </div>
+            </div>
+        </div>
+
+        @if (partidosFiltrados.Count == 0)
+        {
+            <div class="alert alert-info">
+                No hay partidos que coincidan con los filtros seleccionados.
+            </div>
+        }
+        else
+        {
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Listado de partidos</h5>
+                </div>
+
+                <div class="card-body table-responsive">
+                    <table class="table table-striped align-middle">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Fase</th>
+                                <th>Jornada</th>
+                                <th>Fecha</th>
+                                <th>Estadio</th>
+                                <th>Local</th>
+                                <th>Visitante</th>
+                                <th>Resultado</th>
+                                <th>Tarjetas</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (PartidoVista modelo in partidosFiltrados)
+                            {
+                                <tr>
+                                    <td>@modelo.Partido.Id</td>
+                                    <td>@modelo.Partido.Fase</td>
+                                    <td>@modelo.Partido.Jornada</td>
+
+                                    <td style="min-width: 190px;">
+                                        @if (modelo.EstaEditando)
+                                        {
+                                            <input class="form-control"
+                                                   type="datetime-local"
+                                                   @bind="modelo.NuevaFecha" />
+                                        }
+                                        else
+                                        {
+                                            <span>@modelo.Partido.Fecha?.ToString("dd/MM/yyyy HH:mm")</span>
+                                        }
+                                    </td>
+
+                                    <td style="min-width: 190px;">
+                                        @if (modelo.EstaEditando)
+                                        {
+                                            <select class="form-select" @bind="modelo.NombreEstadioSeleccionado">
+                                                <option value="">Seleccionar estadio</option>
+                                                @foreach (EstadioReadDto estadio in estadios)
+                                                {
+                                                    <option value="@estadio.Nombre">@estadio.Nombre</option>
+                                                }
+                                            </select>
+                                        }
+                                        else
+                                        {
+                                            <span>@modelo.Partido.Estadio?.Nombre</span>
+                                        }
+                                    </td>
+
+                                    <td>@modelo.Partido.EquipoLocal?.Nombre</td>
+                                    <td>@modelo.Partido.EquipoVisitante?.Nombre</td>
+
+                                    <td style="min-width: 260px;">
+                                        @if (modelo.EstaEditando)
+                                        {
+                                            <div class="d-flex gap-2 mb-2">
+                                                <input class="form-control"
+                                                       type="number"
+                                                       min="0"
+                                                       placeholder="Local"
+                                                       @bind="modelo.GolesLocal"
+                                                       @bind:event="oninput" />
+
+                                                <input class="form-control"
+                                                       type="number"
+                                                       min="0"
+                                                       placeholder="Visitante"
+                                                       @bind="modelo.GolesVisitante"
+                                                       @bind:event="oninput" />
+                                            </div>
+
+                                            @if (PuedeTenerPenales(modelo))
+                                            {
+                                                <div class="border rounded p-2 bg-light">
+                                                    <label class="form-label mb-1 small fw-bold">Penales</label>
+
+                                                    <div class="d-flex gap-2 mb-2">
+                                                        <input class="form-control"
+                                                               type="number"
+                                                               min="0"
+                                                               placeholder="Pen. Local"
+                                                               @bind="modelo.PenalesLocal" />
+
+                                                        <input class="form-control"
+                                                               type="number"
+                                                               min="0"
+                                                               placeholder="Pen. Visitante"
+                                                               @bind="modelo.PenalesVisitante" />
+                                                    </div>
+
+                                                    <button class="btn btn-sm btn-outline-dark"
+                                                            @onclick="() => SimularPenales(modelo)">
+                                                        Simular penales
+                                                    </button>
+                                                </div>
+                                            }
+                                            else if (modelo.Partido.Fase != "Fase de Grupos" &&
+                                                     modelo.GolesLocal != null &&
+                                                     modelo.GolesVisitante != null &&
+                                                     modelo.GolesLocal != modelo.GolesVisitante)
+                                            {
+                                                <small class="text-muted">
+                                                    Los penales solo aplican si el partido eliminatorio termina empatado.
+                                                </small>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            @if (modelo.Partido.GolesLocal == null || modelo.Partido.GolesVisitante == null)
+                                            {
+                                                <span class="text-muted">Sin resultado</span>
+                                            }
+                                            else
+                                            {
+                                                <span>@modelo.Partido.GolesLocal - @modelo.Partido.GolesVisitante</span>
+
+                                                @if (modelo.Partido.PenalesLocal != null && modelo.Partido.PenalesVisitante != null)
+                                                {
+                                                    <br />
+                                                    <small class="text-muted">
+                                                        Penales: @modelo.Partido.PenalesLocal - @modelo.Partido.PenalesVisitante
+                                                    </small>
+                                                }
+                                            }
+                                        }
+                                    </td>
+
+                                    <td style="min-width: 260px;">
+                                        @if (modelo.EstaEditando)
+                                        {
+                                            <div class="row g-2">
+                                                <div class="col-6">
+                                                    <label class="form-label mb-1 small">Amarillas local</label>
+                                                    <input class="form-control"
+                                                           type="number"
+                                                           min="0"
+                                                           @bind="modelo.TarjetasAmarillasLocal" />
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="form-label mb-1 small">Rojas local</label>
+                                                    <input class="form-control"
+                                                           type="number"
+                                                           min="0"
+                                                           @bind="modelo.TarjetasRojasLocal" />
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="form-label mb-1 small">Amarillas visitante</label>
+                                                    <input class="form-control"
+                                                           type="number"
+                                                           min="0"
+                                                           @bind="modelo.TarjetasAmarillasVisitante" />
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="form-label mb-1 small">Rojas visitante</label>
+                                                    <input class="form-control"
+                                                           type="number"
+                                                           min="0"
+                                                           @bind="modelo.TarjetasRojasVisitante" />
+                                                </div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="small">
+                                                <div>
+                                                    <strong>@modelo.Partido.EquipoLocal?.Nombre:</strong>
+                                                    @modelo.Partido.TarjetasAmarillasLocal amarillas,
+                                                    @modelo.Partido.TarjetasRojasLocal rojas
+                                                </div>
+                                                <div>
+                                                    <strong>@modelo.Partido.EquipoVisitante?.Nombre:</strong>
+                                                    @modelo.Partido.TarjetasAmarillasVisitante amarillas,
+                                                    @modelo.Partido.TarjetasRojasVisitante rojas
+                                                </div>
+                                            </div>
+                                        }
+                                    </td>
+
+                                    <td style="min-width: 160px;">
+                                        @if (modelo.EstaEditando)
+                                        {
+                                            <div class="d-flex gap-2">
+                                                <button class="btn btn-sm btn-success"
+                                                        @onclick="() => GuardarCambios(modelo)">
+                                                    Guardar
+                                                </button>
+
+                                                <button class="btn btn-sm btn-secondary"
+                                                        @onclick="() => CancelarEdicion(modelo)">
+                                                    Cancelar
+                                                </button>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            @if (PartidoEstaFinalizado(modelo))
+                                            {
+                                                <span class="text-muted small">Partido finalizado</span>
+                                            }
+                                            else
+                                            {
+                                                <button class="btn btn-sm btn-outline-primary"
+                                                        @onclick="() => ActivarEdicion(modelo)">
+                                                    Editar
+                                                </button>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    private UsuarioReadDto? usuarioActual;
+    private bool puedeGestionar;
+    private string? mensajeError;
+    private string? mensajeExito;
+
+    private DateTime? fechaFiltro;
+    private string estadioFiltro = "";
+    private string faseFiltro = "";
+
+    private List<EstadioReadDto> estadios = new List<EstadioReadDto>();
+    private List<PartidoVista> partidosVista = new List<PartidoVista>();
+
+    private FixtureReadDto? FixtureActual;
+    private DateTime FechaSeleccionada = DateTime.Today;
+    private int HoraSeleccionada = 14;
+    private int JornadaSeleccionada = 1;
+    private string FaseSeleccionada = "Fase de Grupos";
+
+    private List<string> fasesDisponibles
+    {
+        get
+        {
+            return partidosVista
+                .Select(p => p.Partido.Fase)
+                .Where(fase => !string.IsNullOrWhiteSpace(fase))
+                .Distinct()
+                .OrderBy(fase => fase)
+                .ToList();
+        }
+    }
+
+    private List<PartidoVista> partidosFiltrados
+    {
+        get
+        {
+            IEnumerable<PartidoVista> resultado = partidosVista;
+
+            if (fechaFiltro != null)
+            {
+                resultado = resultado.Where(p =>
+                    p.Partido.Fecha != null &&
+                    p.Partido.Fecha.Value.Date == fechaFiltro.Value.Date
+                );
+            }
+
+            if (!string.IsNullOrWhiteSpace(estadioFiltro))
+            {
+                resultado = resultado.Where(p =>
+                    p.Partido.Estadio != null &&
+                    p.Partido.Estadio.Nombre == estadioFiltro
+                );
+            }
+
+            if (!string.IsNullOrWhiteSpace(faseFiltro))
+            {
+                resultado = resultado.Where(p =>
+                    p.Partido.Fase == faseFiltro
+                );
+            }
+
+            return resultado.ToList();
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        usuarioActual = SesionService.ObtenerUsuarioActual();
+
+        if (usuarioActual == null)
+        {
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+
+        puedeGestionar = usuarioActual.EsEditor;
+
+        if (!puedeGestionar)
+        {
+            return;
+        }
+
+        try
+        {
+            FixtureActual = FixtureService.ObtenerFixtureDto();
+        }
+        catch
+        {
+            FixtureActual = null;
+        }
+
+        CargarDatos();
+    }
+
+    private void CargarDatos()
+    {
+        estadios = EstadioService.ObtenerEstadiosDetalle();
+
+        partidosVista = PartidoService.ObtenerPartidosListado()
+            .Select(partido => CrearPartidoVista(partido))
+            .ToList();
+    }
+
+    private PartidoVista CrearPartidoVista(PartidoReadDto partido)
+    {
+        return new PartidoVista
+        {
+            Partido = partido,
+            NuevaFecha = partido.Fecha ?? DateTime.Now,
+            NombreEstadioSeleccionado = partido.Estadio?.Nombre ?? "",
+            GolesLocal = partido.GolesLocal,
+            GolesVisitante = partido.GolesVisitante,
+            PenalesLocal = partido.PenalesLocal,
+            PenalesVisitante = partido.PenalesVisitante,
+            TarjetasAmarillasLocal = partido.TarjetasAmarillasLocal,
+            TarjetasRojasLocal = partido.TarjetasRojasLocal,
+            TarjetasAmarillasVisitante = partido.TarjetasAmarillasVisitante,
+            TarjetasRojasVisitante = partido.TarjetasRojasVisitante,
+            EstaEditando = false
+        };
+    }
+
+    private void LimpiarFiltros()
+    {
+        fechaFiltro = null;
+        estadioFiltro = "";
+        faseFiltro = "";
+    }
+
+    private void ActivarEdicion(PartidoVista modelo)
+    {
+        LimpiarMensajes();
+
+        foreach (PartidoVista partidoVista in partidosVista)
+        {
+            partidoVista.EstaEditando = false;
+        }
+
+        modelo.NuevaFecha = modelo.Partido.Fecha ?? DateTime.Now;
+        modelo.NombreEstadioSeleccionado = modelo.Partido.Estadio?.Nombre ?? "";
+        modelo.GolesLocal = modelo.Partido.GolesLocal;
+        modelo.GolesVisitante = modelo.Partido.GolesVisitante;
+        modelo.PenalesLocal = modelo.Partido.PenalesLocal;
+        modelo.PenalesVisitante = modelo.Partido.PenalesVisitante;
+        modelo.TarjetasAmarillasLocal = modelo.Partido.TarjetasAmarillasLocal;
+        modelo.TarjetasRojasLocal = modelo.Partido.TarjetasRojasLocal;
+        modelo.TarjetasAmarillasVisitante = modelo.Partido.TarjetasAmarillasVisitante;
+        modelo.TarjetasRojasVisitante = modelo.Partido.TarjetasRojasVisitante;
+        modelo.EstaEditando = true;
+    }
+
+    private void CancelarEdicion(PartidoVista modelo)
+    {
+        LimpiarMensajes();
+
+        modelo.NuevaFecha = modelo.Partido.Fecha ?? DateTime.Now;
+        modelo.NombreEstadioSeleccionado = modelo.Partido.Estadio?.Nombre ?? "";
+        modelo.GolesLocal = modelo.Partido.GolesLocal;
+        modelo.GolesVisitante = modelo.Partido.GolesVisitante;
+        modelo.PenalesLocal = modelo.Partido.PenalesLocal;
+        modelo.PenalesVisitante = modelo.Partido.PenalesVisitante;
+        modelo.TarjetasAmarillasLocal = modelo.Partido.TarjetasAmarillasLocal;
+        modelo.TarjetasRojasLocal = modelo.Partido.TarjetasRojasLocal;
+        modelo.TarjetasAmarillasVisitante = modelo.Partido.TarjetasAmarillasVisitante;
+        modelo.TarjetasRojasVisitante = modelo.Partido.TarjetasRojasVisitante;
+        modelo.EstaEditando = false;
+    }
+
+    private void GuardarCambios(PartidoVista modelo)
+    {
+        LimpiarMensajes();
+
+        try
+        {
+            if (usuarioActual == null)
+            {
+                mensajeError = "Debe iniciar sesión.";
+                return;
+            }
+
+            GuardarFecha(modelo);
+            GuardarEstadio(modelo);
+            GuardarResultado(modelo);
+            GuardarPenales(modelo);
+            GuardarTarjetas(modelo);
+
+            mensajeExito = $"Se modificó el partido {modelo.Partido.Id}.";
+            CargarDatos();
+        }
+        catch (Exception ex)
+        {
+            mensajeError = ex.Message;
+        }
+    }
+
+    private void GuardarFecha(PartidoVista modelo)
+    {
+        if (modelo.Partido.Fecha != modelo.NuevaFecha)
+        {
+            PartidoService.EditarFecha(usuarioActual!, modelo.Partido.Id, modelo.NuevaFecha);
+        }
+    }
+
+    private void GuardarEstadio(PartidoVista modelo)
+    {
+        if (string.IsNullOrWhiteSpace(modelo.NombreEstadioSeleccionado))
+        {
+            mensajeError = "Debe seleccionar un estadio.";
+            throw new InvalidOperationException("Debe seleccionar un estadio.");
+        }
+
+        string estadioActual = modelo.Partido.Estadio?.Nombre ?? "";
+
+        if (estadioActual != modelo.NombreEstadioSeleccionado)
+        {
+            EstadioReadDto estadio = estadios.First(e => e.Nombre == modelo.NombreEstadioSeleccionado);
+            PartidoService.EditarEstadio(usuarioActual!, modelo.Partido.Id, estadio);
+        }
+    }
+
+    private void GuardarResultado(PartidoVista modelo)
+    {
+        if (modelo.GolesLocal == null && modelo.GolesVisitante == null)
+        {
+            return;
+        }
+
+        if (modelo.GolesLocal == null || modelo.GolesVisitante == null)
+        {
+            throw new InvalidOperationException("Debe ingresar los goles de ambos equipos.");
+        }
+
+        bool cambioResultado =
+            modelo.Partido.GolesLocal != modelo.GolesLocal ||
+            modelo.Partido.GolesVisitante != modelo.GolesVisitante;
+
+        if (cambioResultado)
+        {
+            PartidoService.CargarResultado(
+                usuarioActual!,
+                modelo.Partido.Id,
+                modelo.GolesLocal.Value,
+                modelo.GolesVisitante.Value
+            );
+        }
+    }
+
+    private void GuardarPenales(PartidoVista modelo)
+    {
+        if (!PuedeTenerPenales(modelo))
+        {
+            return;
+        }
+
+        if (modelo.PenalesLocal == null && modelo.PenalesVisitante == null)
+        {
+            return;
+        }
+
+        if (modelo.PenalesLocal == null || modelo.PenalesVisitante == null)
+        {
+            throw new InvalidOperationException("Debe ingresar los penales de ambos equipos.");
+        }
+
+        bool cambioPenales =
+            modelo.Partido.PenalesLocal != modelo.PenalesLocal ||
+            modelo.Partido.PenalesVisitante != modelo.PenalesVisitante;
+
+        if (cambioPenales)
+        {
+            PartidoService.CargarPenales(
+                usuarioActual!,
+                modelo.Partido.Id,
+                modelo.PenalesLocal.Value,
+                modelo.PenalesVisitante.Value
+            );
+        }
+    }
+
+    private void GuardarTarjetas(PartidoVista modelo)
+    {
+        bool cambioTarjetas =
+            modelo.Partido.TarjetasAmarillasLocal != modelo.TarjetasAmarillasLocal ||
+            modelo.Partido.TarjetasRojasLocal != modelo.TarjetasRojasLocal ||
+            modelo.Partido.TarjetasAmarillasVisitante != modelo.TarjetasAmarillasVisitante ||
+            modelo.Partido.TarjetasRojasVisitante != modelo.TarjetasRojasVisitante;
+
+        if (!cambioTarjetas)
+        {
+            return;
+        }
+
+        PartidoService.CargarTarjetas(
+            MapearUsuarioActual(),
+            modelo.Partido.Id,
+            modelo.TarjetasAmarillasLocal,
+            modelo.TarjetasRojasLocal,
+            modelo.TarjetasAmarillasVisitante,
+            modelo.TarjetasRojasVisitante
+        );
+    }
+
+    private bool PuedeTenerPenales(PartidoVista modelo)
+    {
+        return modelo.Partido.Fase != "Fase de Grupos" &&
+               modelo.GolesLocal != null &&
+               modelo.GolesVisitante != null &&
+               modelo.GolesLocal == modelo.GolesVisitante;
+    }
+
+    private bool PartidoEstaFinalizado(PartidoVista modelo)
+    {
+        bool tieneResultado =
+            modelo.Partido.GolesLocal != null &&
+            modelo.Partido.GolesVisitante != null;
+
+        if (!tieneResultado)
+        {
+            return false;
+        }
+
+        if (modelo.Partido.Fase == "Fase de Grupos")
+        {
+            return true;
+        }
+
+        bool hayEmpate =
+            modelo.Partido.GolesLocal == modelo.Partido.GolesVisitante;
+
+        if (!hayEmpate)
+        {
+            return true;
+        }
+
+        return modelo.Partido.PenalesLocal != null &&
+               modelo.Partido.PenalesVisitante != null;
+    }
+
+    private void SimularPenales(PartidoVista modelo)
+    {
+        LimpiarMensajes();
+
+        try
+        {
+            if (usuarioActual == null)
+            {
+                mensajeError = "Debe iniciar sesión.";
+                return;
+            }
+
+            if (modelo.GolesLocal == null || modelo.GolesVisitante == null)
+            {
+                mensajeError = "Debe ingresar el resultado antes de simular penales.";
+                return;
+            }
+
+            if (modelo.GolesLocal != modelo.GolesVisitante)
+            {
+                mensajeError = "Solo se pueden simular penales si el partido terminó empatado.";
+                return;
+            }
+
+            GuardarResultado(modelo);
+
+            PartidoService.SimularPenales(
+                usuarioActual,
+                modelo.Partido.Id
+            );
+
+            mensajeExito = $"Se simularon los penales del partido {modelo.Partido.Id}.";
+            CargarDatos();
+        }
+        catch (Exception ex)
+        {
+            mensajeError = ex.Message;
+        }
+    }
+
+    private void LimpiarMensajes()
+    {
+        mensajeError = null;
+        mensajeExito = null;
+    }
+
+    private UsuarioReadDto MapearUsuarioActual()
+    {
+        if (usuarioActual == null)
+        {
+            throw new InvalidOperationException("Debe iniciar sesión.");
+        }
+
+        return new UsuarioReadDto
+        {
+            Nombre = usuarioActual.Nombre,
+            Apellido = usuarioActual.Apellido,
+            Correo = usuarioActual.Correo,
+            FechaNacimiento = usuarioActual.FechaNacimiento,
+            Roles = usuarioActual.Roles.Select(rol => rol.ToString()).ToList()
+        };
+    }
+
+    private void SimularFecha()
+    {
+        LimpiarMensajes();
+
+        try
+        {
+            if (usuarioActual == null || FixtureActual == null)
+            {
+                mensajeError = "No hay usuario o fixture cargado";
+                return;
+            }
+
+            DateTime fechaCompleta = new DateTime(
+                FechaSeleccionada.Year,
+                FechaSeleccionada.Month,
+                FechaSeleccionada.Day,
+                HoraSeleccionada,
+                0,
+                0
+            );
+
+            FixtureService.SimularFecha(
+                fechaCompleta,
+                usuarioActual
+            );
+
+            mensajeExito = $"Se simuló la fecha: {fechaCompleta:dd/MM/yyyy HH:mm}.";
+            CargarDatos();
+        }
+        catch (Exception ex)
+        {
+            mensajeError = ex.Message;
+        }
+    }
+
+    private void SimularJornada()
+    {
+        LimpiarMensajes();
+
+        try
+        {
+            if (usuarioActual == null || FixtureActual == null)
+            {
+                mensajeError = "No hay usuario o fixture cargado";
+                return;
+            }
+
+            FixtureService.SimularJornada(
+                JornadaSeleccionada,
+                usuarioActual
+            );
+
+            mensajeExito = $"Se simuló la jornada: {JornadaSeleccionada}.";
+            CargarDatos();
+        }
+        catch (Exception ex)
+        {
+            mensajeError = ex.Message;
+        }
+    }
+
+    private void SimularFase()
+    {
+        LimpiarMensajes();
+
+        try
+        {
+            if (usuarioActual == null || FixtureActual == null)
+            {
+                mensajeError = "No hay usuario o fixture cargado";
+                return;
+            }
+
+            FixtureService.SimularFase(
+                FaseSeleccionada,
+                usuarioActual
+            );
+
+            mensajeExito = $"Se simuló la fase: {FaseSeleccionada}.";
+            CargarDatos();
+            
+        }
+        catch (Exception ex)
+        {
+            mensajeError = ex.Message;
+        }
+    }
+
+    private class PartidoVista
+    {
+        public PartidoReadDto Partido { get; set; } = null!;
+        public DateTime NuevaFecha { get; set; }
+        public string NombreEstadioSeleccionado { get; set; } = "";
+        public int? GolesLocal { get; set; }
+        public int? GolesVisitante { get; set; }
+        public int? PenalesLocal { get; set; }
+        public int? PenalesVisitante { get; set; }
+        public int TarjetasAmarillasLocal { get; set; }
+        public int TarjetasRojasLocal { get; set; }
+        public int TarjetasAmarillasVisitante { get; set; }
+        public int TarjetasRojasVisitante { get; set; }
+        public bool EstaEditando { get; set; }
+    }
+}

@@ -1,0 +1,143 @@
+@page "/exportacion"
+
+@using DTOs
+@using Services.Interfaces
+
+@inject IExportacionService ExportacionService
+@inject ISesionService SesionService
+@inject NavigationManager NavigationManager
+
+@rendermode InteractiveServer
+
+<PageTitle>Exportación</PageTitle>
+
+<div class="container mt-4">
+    <h1>Exportación</h1>
+
+    @if (!string.IsNullOrEmpty(mensajeError))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @mensajeError
+            <button type="button" class="btn-close" @onclick="() => mensajeError = null" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (puedeExportar)
+    {
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Rango de fechas</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Desde</label>
+                        <input type="date" class="form-control" @bind="inicio" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Hasta</label>
+                        <input type="date" class="form-control" @bind="fin" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Auditoría</h5>
+            </div>
+            <div class="card-body">
+                <button class="btn btn-outline-primary me-2" @onclick="ExportarAuditoriaCsv">Generar CSV</button>
+                <button class="btn btn-outline-primary" @onclick="ExportarAuditoriaXlsx">Generar XLSX</button>
+            </div>
+        </div>
+
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Fixture final</h5>
+            </div>
+            <div class="card-body">
+                <button class="btn btn-outline-primary me-2" @onclick="ExportarFixtureFinalCsv">Generar CSV</button>
+                <button class="btn btn-outline-primary" @onclick="ExportarFixtureFinalXlsx">Generar XLSX</button>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(archivoUrl))
+        {
+            <div class="alert alert-success">
+                Tu archivo está listo:
+                <a class="btn btn-success btn-sm ms-2" href="@archivoUrl" download="@archivoNombre">Descargar @archivoNombre</a>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    private const string TipoCsv = "text/csv";
+    private const string TipoXlsx = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+    private DateTime inicio = DateTime.Today.AddMonths(-1);
+    private DateTime fin = DateTime.Today;
+
+    private string? mensajeError;
+    private string? archivoUrl;
+    private string? archivoNombre;
+    private UsuarioReadDto? usuarioActual;
+
+    private bool puedeExportar =>
+        usuarioActual?.EsAdministrador == true || usuarioActual?.EsPeriodista == true;
+
+    protected override void OnInitialized()
+    {
+        usuarioActual = SesionService.ObtenerUsuarioActual();
+
+        if (usuarioActual == null)
+        {
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+
+        if (!puedeExportar)
+        {
+            NavigationManager.NavigateTo("/home");
+        }
+    }
+
+    private void ExportarAuditoriaCsv() =>
+        Generar(ExportacionService.ExportarAuditoriaCsv, "auditoria.csv", TipoCsv);
+
+    private void ExportarAuditoriaXlsx() =>
+        Generar(ExportacionService.ExportarAuditoriaXlsx, "auditoria.xlsx", TipoXlsx);
+
+    private void ExportarFixtureFinalCsv() =>
+        Generar(ExportacionService.ExportarFixtureFinalCsv, "fixture-final.csv", TipoCsv);
+
+    private void ExportarFixtureFinalXlsx() =>
+        Generar(ExportacionService.ExportarFixtureFinalXlsx, "fixture-final.xlsx", TipoXlsx);
+
+    private void Generar(Func<UsuarioReadDto, DateTime, DateTime, byte[]> exportar, string nombre, string tipoContenido)
+    {
+        mensajeError = null;
+        archivoUrl = null;
+        archivoNombre = null;
+
+        try
+        {
+            if (usuarioActual == null)
+            {
+                mensajeError = "Debe iniciar sesión para exportar.";
+                return;
+            }
+
+            DateTime finInclusivo = fin.Date.AddDays(1).AddSeconds(-1);
+            byte[] contenido = exportar(usuarioActual, inicio.Date, finInclusivo);
+
+            archivoUrl = $"data:{tipoContenido};base64,{Convert.ToBase64String(contenido)}";
+            archivoNombre = nombre;
+        }
+        catch (Exception ex)
+        {
+            mensajeError = ex.Message;
+        }
+    }
+}

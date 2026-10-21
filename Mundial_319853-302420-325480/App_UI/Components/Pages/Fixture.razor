@@ -1,0 +1,574 @@
+@page "/fixture"
+@using DTOs
+@using Services.Interfaces
+
+@inject ISorteoService SorteoService
+@inject ISesionService SesionService
+@inject IEquipoService EquipoService
+@inject IEstadioService EstadioService
+@inject IFixtureService FixtureService
+@inject ISemillaService SemillaService
+
+<PageTitle>Fixture - Mundial 2026</PageTitle>
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>Fixture del Mundial</h1>
+            <p class="text-muted">Gestión de sorteos y fase de grupos</p>
+        </div>
+
+        @if (UsuarioActual?.EsEditor == true || UsuarioActual?.EsPeriodista == true)
+        {
+            <div class="mb-3">
+                <label class="form-label">Semilla (Token):</label>
+                <select class="form-select" @bind="TokenSeleccionado">
+                    @foreach (SemillaReadDto semilla in SemillasDisponibles)
+                    {
+                        <option value="@semilla.Token">@semilla.Token</option>
+                    }
+                </select>
+            </div>
+        }
+    
+        <div class="d-flex gap-2">
+            @if (UsuarioActual?.EsEditor == true || UsuarioActual?.EsPeriodista == true)
+            {
+                <button class="btn btn-outline-primary" @onclick="CargarFixtureSeleccionado">
+                    <i class="bi bi-arrow-clockwise me-1"></i>Actualizar
+                </button>
+            }
+
+            @if (UsuarioActual?.EsEditor == true)
+            {
+                <button class="btn btn-success shadow-sm" @onclick="AbrirModalMotor">
+                    <i class="bi bi-trophy-fill me-2"></i>Nuevo Sorteo y Fixture
+                </button>
+            }
+            
+            @if (MostrarModalMotor)
+            {
+                <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.6);">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5>Seleccione el motor de simulación.</h5>
+                            </div>
+                            
+                            <div class="modal-body">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="motor" @onclick="() => UsaMotorProbabilistico = true" />
+                                    <label class="form-check-label">Motor Probabilístico.</label>
+                                </div>
+                                
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="motor" @onclick="() => UsaMotorProbabilistico = false" />
+                                    <label class="form-check-label">Motor Aleatorio Puro.</label>
+                                </div>
+                            </div>
+                            
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" @onclick="() => MostrarModalMotor=false">Cancelar</button>
+                                <button class="btn btn-secondary" @onclick="ConfirmarMotor">Crear Fixture</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Mensaje))
+    {
+        <div class="alert @(Mensaje.StartsWith("Error") ? "alert-danger" : "alert-info") alert-dismissible fade show shadow-sm" role="alert">
+            <i class="bi @(Mensaje.StartsWith("Error") ? "bi-exclamation-triangle-fill" : "bi-info-circle-fill") me-2"></i>
+            @Mensaje
+            <button type="button" class="btn-close" @onclick="() => Mensaje = string.Empty" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (FixtureActual != null)
+    {
+        <div class="alert alert-info mb-3">
+            Motor de simulación:
+            <strong>
+                @(FixtureActual.UsaMotorProbabilistico
+                    ? "Probabilístico"
+                    : "Aleatorio Puro")
+            </strong>
+        </div>
+        
+        <div class="alert alert-light border shadow-sm mb-4 d-flex justify-content-between align-items-center">
+            <span>
+                <strong>Estado:</strong> Fase de Grupos generada exitosamente.
+                <span class="badge bg-info text-dark ms-2">Token: @TokenActual</span>
+            </span>
+            <span class="text-muted small">Semilla Fixture: @FixtureActual.Semilla.SemillaFixture</span>
+        </div>
+        
+        @if (UsuarioActual?.EsEditor == true)
+        {
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body">
+                    <h5 class="mb-3">Generar Fases Eliminatorias</h5>
+                    
+                    <div class="D-flex flex-wrap gap-2">
+                        <button class="btn btn-outline-dark" @onclick="GenerarDieciseisavos">Generar Dieciseisavos</button>
+                        <button class="btn btn-outline-dark" @onclick="GenerarOctavos">Generar Octavos</button>
+                        <button class="btn btn-outline-dark" @onclick="GenerarCuartos">Generar Cuartos</button>
+                        <button class="btn btn-outline-dark" @onclick="GenerarSemifinal">Generar Semifinal</button>
+                        <button class="btn btn-outline-dark" @onclick="GenerarTercerYCuartoPuesto">Generar Tercer y Cuarto Puesto</button>
+                        <button class="btn btn-outline-dark" @onclick="GenerarFinal">Generar Final</button>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+            @foreach (var grupo in FixtureActual.Grupos.OrderBy(g => g.Id))
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0 group-card" @onclick="() => VerDetalleGrupo(grupo)">
+                        <div class="card-header bg-dark text-white text-center fw-bold py-3">
+                            GRUPO @grupo.Id
+                        </div>
+                        <ul class="list-group list-group-flush fs-8">
+                            @foreach (var equipo in grupo.Equipos.OrderByDescending(e => e.Puntos).ThenByDescending(e => e.GolesAFavor - e.GolesEnContra).ThenByDescending(e => e.GolesAFavor))
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <span class="fw-medium">@equipo.Nombre</span>
+                                        <span class="badge bg-secondary ms-2">@equipo.Puntos pts</span>
+                                    </div>
+                                    <small class="text-muted bg-light px-2 py-1 rounded border">@equipo.Confederacion</small>
+                                </li>
+                            }
+                        </ul>
+                        <div class="card-footer bg-white border-top-0 text-center pb-3">
+                            <button class="btn btn-sm btn-outline-secondary w-100">
+                                <i class="bi bi-calendar-event me-1"></i> Ver Partidos
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (GrupoSeleccionado != null)
+        {
+            <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.7); backdrop-filter: blur(4px);" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content border-0 shadow-lg">
+                        <div class="modal-header bg-primary text-white py-3">
+                            <h5 class="modal-title fw-bold">
+                                <i class="bi bi-info-circle-fill me-2"></i>
+                                Detalle de Partidos - Grupo @GrupoSeleccionado.Id
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" @onclick="() => GrupoSeleccionado = null"></button>
+                        </div>
+                        <div class="modal-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th class="ps-4">Jornada</th>
+                                            <th>Fecha</th>
+                                            <th class="text-center">Encuentro</th>
+                                            <th class="pe-4">Sede / Estadio</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var partido in GrupoSeleccionado.Partidos.OrderBy(p => p.Jornada).ThenBy(p => p.Fecha))
+                                        {
+                                            <tr>
+                                                <td class="ps-4 align-middle">
+                                                    <span class="badge rounded-pill bg-secondary">Jornada @partido.Jornada</span>
+                                                </td>
+                                                <td class="align-middle">
+                                                    <div class="d-flex flex-column">
+                                                        <span>@partido.Fecha?.ToString("dd MMM yyyy")</span>
+                                                        <small class="text-muted">@partido.Horario</small>
+                                                    </div>
+                                                </td>
+                                                <td class="text-center align-middle py-3">
+                                                    <div class="d-flex justify-content-center align-items-center gap-3">
+                                                        <span class="fw-bold">@partido.EquipoLocal.Nombre</span>
+                                                        <span class="text-muted small">vs</span>
+                                                        <span class="fw-bold">@partido.EquipoVisitante.Nombre</span>
+                                                    </div>
+                                                </td>
+                                                <td class="pe-4 align-middle">
+                                                    <div class="d-flex flex-column">
+                                                        <span class="fw-medium">@partido.Estadio.Nombre</span>
+                                                        <small class="text-muted">@partido.Estadio.Ciudad</small>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="modal-footer bg-light py-2">
+                            <button type="button" class="btn btn-secondary px-4" @onclick="() => GrupoSeleccionado = null">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="card border-0 shadow-sm text-center py-5 mt-4">
+            <div class="card-body">
+                <i class="bi bi-calendar-plus display-1 text-muted mb-4"></i>
+                <h2 class="fw-bold text-dark">No hay fixture generado</h2>
+                <p class="text-muted mx-auto" style="max-width: 500px;">
+                    Para comenzar el torneo, un editor debe realizar el sorteo de grupos y generar el calendario oficial de partidos.
+                </p>
+                @if (UsuarioActual?.EsEditor == true)
+                {
+                    <button class="btn btn-primary btn-lg mt-3 px-5 shadow" @onclick="AbrirModalMotor">
+                        Generar Fase de Grupos Ahora
+                    </button>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@if (FixtureActual != null && FixtureActual.Partidos.Any(p => p.Fase != "Fase de Grupos"))
+{
+    <div class="mt-5">
+        <h2 class="mb-4">Fases Eliminatorias</h2>
+        
+        @foreach (string fase in FasesEliminatorias)
+        {
+            List<PartidoReadDto> partidosFase = FixtureActual.Partidos.Where(p => p.Fase == fase).OrderBy(p => p.Fecha).ToList();
+
+            if (partidosFase.Count > 0)
+            {
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-dark text-white">
+                        @fase
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="row g-3">
+                            @foreach (PartidoReadDto partido in partidosFase)
+                            {
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="border rounder p-3 h-100">
+                                        <div class="text-center mb-2">
+                                            <small class="text-muted">@partido.Fecha?.ToString("dd/MM/yyyy HH:mm")</small>
+                                        </div>
+                                        
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="fw-bold">@partido.EquipoLocal.Nombre</span>
+                                            
+                                            <span class="mx-2">
+                                                @if (partido.GolesLocal != null && partido.GolesVisitante != null)
+                                                {
+                                                    @if (partido.GolesLocal == partido.GolesVisitante)
+                                                    {
+                                                        <strong>(@partido.PenalesLocal) @partido.GolesLocal - @partido.GolesVisitante (@partido.PenalesVisitante)</strong>
+                                                    }
+                                                    else
+                                                    {
+                                                        <strong>@partido.GolesLocal - @partido.GolesVisitante</strong>
+                                                    }
+                                                }
+                                                else
+                                                { 
+                                                    <span>vs</span>
+                                                }
+                                            </span>
+
+                                            <span class="fw-bold">@partido.EquipoVisitante.Nombre</span>
+                                        </div>
+                                        
+                                        <div class="text-center mt-3">
+                                            <small class="text-muted">@partido.Estadio.Nombre</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+}
+
+<style>
+    .group-card {
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+    }
+
+    .group-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 1rem 3rem rgba(0,0,0,.175)!important;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(13, 110, 253, 0.05);
+    }
+</style>
+
+@code {
+    private FixtureReadDto? FixtureActual { get; set; }
+    private GrupoReadDto? GrupoSeleccionado { get; set; }
+    private UsuarioReadDto? UsuarioActual { get; set; }
+    private string Mensaje { get; set; } = "";
+    private int TokenActual { get; set; }
+
+    private List<string> FasesEliminatorias = new List<string>(){"Dieciseisavos de Final", "Octavos de Final", "Cuartos de Final", "Semifinal", "Tercer y Cuarto Puesto", "Final"};
+
+    private List<SemillaReadDto> SemillasDisponibles = new List<SemillaReadDto>();
+    private int TokenSeleccionado;
+    private bool MostrarModalMotor;
+    private bool? UsaMotorProbabilistico;
+    
+    protected override void OnInitialized()
+    {
+        UsuarioActual = SesionService.ObtenerUsuarioActual();
+        SemillasDisponibles = SemillaService.ObtenerSemillasListado();
+        if (SemillasDisponibles.Count > 0)
+        {
+            TokenSeleccionado = SemillasDisponibles[0].Token;
+        }
+        CargarUltimoSorteo();
+    }
+
+    private void CargarUltimoSorteo()
+    {
+        try
+        {
+            FixtureActual = FixtureService.ObtenerFixtureDto();
+            TokenActual = FixtureService.ObtenerTokenActual();
+
+            if (FixtureActual != null && TokenActual == 0)
+            {
+            }
+        }
+        catch (Exception)
+        {
+            FixtureActual = null;
+            TokenActual = 0;
+        }
+    }
+
+    private void CargarFixtureSeleccionado()
+    {
+        try
+        {
+            FixtureActual = FixtureService.ObtenerFixturePorTokenSemillaDto(TokenSeleccionado);
+            TokenActual = FixtureService.ObtenerTokenActual();
+            GrupoSeleccionado = null;
+            Mensaje = $"Fixture cargado para la semilla {TokenSeleccionado}.";
+        }
+        catch (Exception ex)
+        {
+            FixtureActual = null;
+            TokenActual = 0;
+            GrupoSeleccionado = null;
+            Mensaje = $"Error: {ex.Message}";
+        }
+    }
+
+    private void EjecutarSorteoYFixture()
+    {
+        if (UsuarioActual == null || !UsuarioActual.EsEditor)
+        {
+            Mensaje = "Error: No tiene permisos de Editor para realizar un sorteo.";
+            return;
+        }
+
+        if (UsaMotorProbabilistico == null)
+        {
+            Mensaje = "Error: Debe seleccionar un motor de simulación.";
+            return;
+        }
+        
+        try
+        {
+            Mensaje = "Iniciando proceso de sorteo...";
+
+            var equipos = EquipoService.ObtenerEquiposDetalle();
+            var estadios = EstadioService.ObtenerEstadiosDetalle();
+
+            bool seCompletaronEquipos = equipos.Count < 48;
+            bool seCompletaronEstadios = estadios.Count < 4;
+
+            SorteoReadDto sorteo = SorteoService.CrearSorteo(UsuarioActual!, equipos, estadios, TokenSeleccionado);
+            TokenActual = sorteo.Token;
+            SorteoService.SortearEquipos(UsuarioActual!, TokenActual);
+            SemillasDisponibles = SemillaService.ObtenerSemillasListado();
+            SorteoService.CrearFixture(UsuarioActual!, TokenActual, UsaMotorProbabilistico!.Value);
+            FixtureActual = FixtureService.ObtenerFixturePorTokenDto(TokenActual);
+
+            Mensaje = "¡Sorteo finalizado y Fixture de Fase de Grupos generado con éxito!";
+
+            if (seCompletaronEquipos)
+            {
+                Mensaje += " Se completaron equipos automáticamente porque no había suficientes.";
+            }
+
+            if (seCompletaronEstadios)
+            {
+                Mensaje += " Se completaron estadios automáticamente porque no había suficientes.";
+            }
+        }
+        catch (Exception ex)
+        {
+            Mensaje = $"Error en el proceso: {ex.Message}";
+        }
+    }
+
+    private void VerDetalleGrupo(GrupoReadDto grupo)
+    {
+        GrupoSeleccionado = grupo;
+    }
+
+    private void GenerarDieciseisavos()
+    {
+        if (UsuarioActual == null || !UsuarioActual.EsEditor)
+        {
+            Mensaje = "Error: No tiene permisos de Editor para realizar esta acci�n.";
+            return;
+        }
+        try
+        {
+            FixtureService.GenerarDieciseisavos();
+            CargarUltimoSorteo();
+
+            Mensaje = "Dieciseisavos de final generados correctamente";
+        }
+        catch (Exception ex)
+        {
+            Mensaje = $"Error: {ex.Message}";
+        }
+    }
+    
+    private void GenerarOctavos()
+    {
+        if (UsuarioActual == null || !UsuarioActual.EsEditor)
+        {
+            Mensaje = "Error: No tiene permisos de Editor para realizar esta acci�n.";
+            return;
+        }
+        try
+        {
+            FixtureService.GenerarOctavos();
+            CargarUltimoSorteo();
+
+            Mensaje = "Octavos de final generados correctamente";
+        }
+        catch (Exception ex)
+        {
+            Mensaje = $"Error: {ex.Message}";
+        }
+    }
+    
+    private void GenerarCuartos()
+    {
+        if (UsuarioActual == null || !UsuarioActual.EsEditor)
+        {
+            Mensaje = "Error: No tiene permisos de Editor para realizar esta acci�n.";
+            return;
+        }
+        try
+        {
+            FixtureService.GenerarCuartos();
+            CargarUltimoSorteo();
+
+            Mensaje = "Cuartos de final generados correctamente";
+        }
+        catch (Exception ex)
+        {
+            Mensaje = $"Error: {ex.Message}";
+        }
+    }
+    
+    private void GenerarSemifinal()
+    {
+        if (UsuarioActual == null || !UsuarioActual.EsEditor)
+        {
+            Mensaje = "Error: No tiene permisos de Editor para realizar esta acci�n.";
+            return;
+        }
+        try
+        {
+            FixtureService.GenerarSemifinal();
+            CargarUltimoSorteo();
+
+            Mensaje = "Semifinales generadas correctamente";
+        }
+        catch (Exception ex)
+        {
+            Mensaje = $"Error: {ex.Message}";
+        }
+    }
+    
+    private void GenerarTercerYCuartoPuesto()
+    {
+        if (UsuarioActual == null || !UsuarioActual.EsEditor)
+        {
+            Mensaje = "Error: No tiene permisos de Editor para realizar esta acci�n.";
+            return;
+        }
+        try
+        {
+            FixtureService.GenerarTercerYCuartoPuesto();
+            CargarUltimoSorteo();
+
+            Mensaje = "Tercer y Cuarto Puesto generado correctamente";
+        }
+        catch (Exception ex)
+        {
+            Mensaje = $"Error: {ex.Message}";
+        }
+    }
+    
+    private void GenerarFinal()
+    {
+        if (UsuarioActual == null || !UsuarioActual.EsEditor)
+        {
+            Mensaje = "Error: No tiene permisos de Editor para realizar esta acci�n.";
+            return;
+        }
+        try
+        {
+            FixtureService.GenerarFinal();
+            CargarUltimoSorteo();
+
+            Mensaje = "Final generada correctamente";
+        }
+        catch (Exception ex)
+        {
+            Mensaje = $"Error: {ex.Message}";
+        }
+    }
+
+    private void AbrirModalMotor()
+    {
+        UsaMotorProbabilistico = null;
+        MostrarModalMotor = true;
+    }
+
+    private void ConfirmarMotor()
+    {
+        if (UsaMotorProbabilistico == null)
+        {
+            Mensaje = "Error: Debe seleccionar un motor de simulación.";
+            return;
+        }
+
+        MostrarModalMotor = false;
+        EjecutarSorteoYFixture();
+    }
+}
+
+

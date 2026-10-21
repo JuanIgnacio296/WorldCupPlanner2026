@@ -1,0 +1,134 @@
+@page "/semillas"
+
+@using DTOs
+@using Services.Interfaces
+
+@inject ISemillaService SemillaService
+@inject NavigationManager NavigationManager
+
+@rendermode InteractiveServer
+
+<PageTitle>Semillas</PageTitle>
+
+<h3>Gestión de Semillas</h3>
+
+<div class="mb-4">
+    <h5>Agregar Semilla</h5>
+    <div class="d-flex flex-wrap gap-3">
+        <div class="mb-2">
+            <label>Token</label>
+            <input type="number" class="form-control" @bind="token" disabled/>
+        </div>
+
+        <div class="mb-2">
+            <label>Semilla Fixture</label>
+            <input type="number" class="form-control" @bind="semillaFixture" />
+        </div>
+
+        <div class="mb-2">
+            <label>Semilla Completar</label>
+            <input type="number" class="form-control" @bind="semillaCompletar" />
+        </div>
+        
+        <div class="mb-2">
+            <label>Semilla Cruces Fase</label>
+            <input type="number" class="form-control" @bind="semillaCrucesFase" />
+        </div>
+        
+        <div class="mb-2">
+            <label>Semilla Simulación</label>
+            <input type="number" class="form-control" @bind="semillaSimulacion" />
+        </div>
+        
+        <button class="btn btn-primary" @onclick="AgregarSemilla">Agregar</button>
+        
+        @if (!string.IsNullOrEmpty(mensajeError))
+        {
+            <div class="alert alert-danger mt-3">@mensajeError</div>
+        }
+        
+        @if (!string.IsNullOrEmpty(mensajeExito))
+        {
+            <div class="alert alert-success seed-success mt-3">@mensajeExito</div>
+        }
+    </div>
+</div>
+
+<hr/>
+
+<h5>Lista de Semillas</h5>
+
+<table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+        <th>Token</th>
+        <th>Fixture</th>
+        <th>Completar</th>
+        <th>Cruces Fase</th>
+        <th>Simulación</th>
+    </tr>
+    </thead>
+    
+    <tbody>
+    @foreach (SemillaReadDto semilla in semillas)
+    {
+        <tr>
+            <td>@semilla.Token</td>
+            <td>@semilla.SemillaFixture</td>
+            <td>@semilla.SemillaCompletar</td>
+            <td>@semilla.SemillaCrucesFase</td>
+            <td>@semilla.SemillaSimulacion</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@code {
+
+    private List<SemillaReadDto> semillas = new List<SemillaReadDto>();
+    private int token;
+    private int semillaFixture;
+    private int semillaCompletar;
+    private int semillaCrucesFase;
+    private int semillaSimulacion;
+    private string mensajeError = "";
+    private string mensajeExito = "";
+
+    protected override void OnInitialized()
+    {
+        semillas = SemillaService.ObtenerSemillasListado();
+        token = SemillaService.ObtenerSiguienteTokenDisponible();
+    }
+
+    private void AgregarSemilla()
+    {
+        mensajeError = "";
+        mensajeExito = "";
+
+        try
+        {
+            SemillaCreateDto nuevaSemilla = new SemillaCreateDto
+            {
+                Token = token,
+                SemillaFixture = semillaFixture,
+                SemillaCompletar = semillaCompletar,
+                SemillaCrucesFase = semillaCrucesFase,
+                SemillaSimulacion = semillaSimulacion
+            };
+            SemillaService.AgregarSemilla(nuevaSemilla);
+            semillas = SemillaService.ObtenerSemillasListado();
+            mensajeExito = "Semilla agregada correctamente";
+
+            token = SemillaService.ObtenerSiguienteTokenDisponible();
+            semillaFixture = 0;
+            semillaCrucesFase = 0;
+            semillaCompletar = 0;
+            semillaSimulacion = 0;
+        }
+        catch (Exception ex)
+        {
+            mensajeError = ex.Message;
+        }
+    }
+}
+

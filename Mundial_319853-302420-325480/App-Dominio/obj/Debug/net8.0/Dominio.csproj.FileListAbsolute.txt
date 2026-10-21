@@ -1,0 +1,12 @@
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\Dominio\bin\Debug\net8.0\Dominio.deps.json
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\Dominio\bin\Debug\net8.0\Dominio.dll
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\Dominio\bin\Debug\net8.0\Dominio.pdb
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\Dominio\obj\Debug\net8.0\Dominio.GeneratedMSBuildEditorConfig.editorconfig
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\Dominio\obj\Debug\net8.0\Dominio.AssemblyInfoInputs.cache
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\Dominio\obj\Debug\net8.0\Dominio.AssemblyInfo.cs
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\Dominio\obj\Debug\net8.0\Dominio.csproj.CoreCompileInputs.cache
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\Dominio\obj\Debug\net8.0\Dominio.sourcelink.json
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\Dominio\obj\Debug\net8.0\Dominio.dll
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\Dominio\obj\Debug\net8.0\refint\Dominio.dll
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\Dominio\obj\Debug\net8.0\Dominio.pdb
+C:\ProgramacionC\ObligatorioDA1-319853-302420-325480\Mundial_319853-302420-325480\Dominio\obj\Debug\net8.0\ref\Dominio.dll

@@ -1,0 +1,144 @@
+@using DTOs
+@using Services.Interfaces
+@implements IDisposable
+
+@inject ISesionService SesionService
+@inject INotificacionService NotificacionService
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="home">
+            <span class="brand-icon">&#127942;</span>
+            <span class="brand-text">Mundial 2026</span>
+        </a>
+    </div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="flex-column">
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="home" Match="NavLinkMatch.All">
+                <span class="nav-menu-text">Inicio</span>
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="equipos">
+                <span class="nav-menu-text"> Equipos</span>
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="fixture">
+                <span class="nav-menu-text"> Fixture</span>
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="partidos">
+                <span class="nav-menu-text"> Partidos</span>
+            </NavLink>
+        </div>
+
+        @if (esEditor)
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="importar-equipos">
+                    <span class="nav-menu-text"> Importar equipos</span>
+                </NavLink>
+            </div>
+        }
+
+        @if (usuarioActual != null)
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="usuarios">
+                    <span class="nav-menu-text"> Usuarios</span>
+                </NavLink>
+            </div>
+        }
+
+        @if (esAdmin)
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="estadios">
+                    <span class="nav-menu-text"> Estadios</span>
+                </NavLink>
+            </div>
+
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="auditoria">
+                    <span class="nav-menu-text"> Auditoria</span>
+                </NavLink>
+            </div>
+
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="semillas">
+                    <span class="nav-menu-text"> Semillas</span>
+                </NavLink>
+            </div>
+        }
+
+        @if (esPeriodista)
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="notificaciones">
+                    <span class="nav-menu-text"> Notificaciones</span>
+                    @if (HayNotificaciones())
+                    {
+                        <span class="brand-icon">❗</span>
+                    }
+                </NavLink>
+            </div>
+        }
+
+        @if (esAdmin || esPeriodista)
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="exportacion">
+                    <span class="nav-menu-text"> Exportación</span>
+                </NavLink>
+            </div>
+        }
+
+    </nav>
+</div>
+
+@code {
+    private UsuarioReadDto? usuarioActual => SesionService.ObtenerUsuarioActual();
+
+    private bool esAdmin => usuarioActual?.EsAdministrador == true;
+
+    private bool esEditor => usuarioActual?.EsEditor == true;
+
+    private bool esPeriodista => usuarioActual?.EsPeriodista == true;
+
+    protected override void OnInitialized()
+    {
+        NotificacionService.NotificacionesActualizadas += ActualizarMenu;
+    }
+
+    private bool HayNotificaciones()
+    {
+        if (usuarioActual == null)
+        {
+            return false;
+        }
+
+        List<NotificacionDto> notificaciones = NotificacionService.ObtenerNoLeidasPorUsuario(usuarioActual.Correo);
+        return notificaciones.Any();
+    }
+
+    private void ActualizarMenu()
+    {
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        NotificacionService.NotificacionesActualizadas -= ActualizarMenu;
+    }
+}

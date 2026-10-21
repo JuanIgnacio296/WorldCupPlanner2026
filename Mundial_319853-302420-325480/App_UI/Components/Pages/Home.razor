@@ -1,0 +1,411 @@
+@page "/home"
+@using DTOs
+@using Services.Interfaces
+@inject ISesionService SesionService
+
+<PageTitle>Inicio - Mundial 2026</PageTitle>
+
+<div class="home-page">
+    <section class="hero-card">
+        <div class="hero-content">
+            <span class="hero-badge">Sistema de gestión</span>
+            <h1>Mundial 2026</h1>
+            <p>
+                Administrar equipos, estadios, sorteos, fixture, partidos y resultados desde un único panel.
+            </p>
+
+            @if (usuarioActual != null)
+            {
+                <div class="user-summary">
+                    <span class="user-avatar">@InicialesUsuario</span>
+                    <div>
+                        <strong>@usuarioActual.Nombre @usuarioActual.Apellido</strong>
+                        <small>@TextoRoles</small>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="hero-visual">
+            <div class="trophy-circle">🏆</div>
+            <div class="floating-card card-one">48 equipos</div>
+            <div class="floating-card card-two">12 grupos</div>
+            <div class="floating-card card-three">Fixture completo</div>
+        </div>
+    </section>
+
+    <section class="quick-actions">
+        <h2>Accesos rápidos</h2>
+
+        <div class="action-grid">
+            <a class="action-card" href="equipos">
+                <span class="action-icon">👥</span>
+                <div>
+                    <h3>Equipos</h3>
+                    <p>Consultar y gestionar los equipos participantes.</p>
+                </div>
+            </a>
+
+            <a class="action-card" href="fixture">
+                <span class="action-icon">🗓️</span>
+                <div>
+                    <h3>Fixture</h3>
+                    <p>Generar el sorteo, grupos y calendario de partidos.</p>
+                </div>
+            </a>
+
+            <a class="action-card" href="partidos">
+                <span class="action-icon">⚽</span>
+                <div>
+                    <h3>Partidos</h3>
+                    <p>Editar fechas, estadios, resultados y simular encuentros.</p>
+                </div>
+            </a>
+
+            @if (esAdmin)
+            {
+                <a class="action-card" href="estadios">
+                    <span class="action-icon">🏟️</span>
+                    <div>
+                        <h3>Estadios</h3>
+                        <p>Crear, modificar y completar estadios mínimos.</p>
+                    </div>
+                </a>
+
+                <a class="action-card" href="usuarios">
+                    <span class="action-icon">👤</span>
+                    <div>
+                        <h3>Usuarios</h3>
+                        <p>Gestionar usuarios y roles del sistema.</p>
+                    </div>
+                </a>
+
+                <a class="action-card" href="auditoria">
+                    <span class="action-icon">📄</span>
+                    <div>
+                        <h3>Auditoría</h3>
+                        <p>Consultar acciones registradas en el sistema.</p>
+                    </div>
+                </a>
+            }
+
+            @if (esEditor)
+            {
+                <a class="action-card" href="importar-equipos">
+                    <span class="action-icon">⬇️</span>
+                    <div>
+                        <h3>Importar equipos</h3>
+                        <p>Cargar equipos desde archivo CSV.</p>
+                    </div>
+                </a>
+            }
+            
+            @if (esEditor)
+            {
+                <a class="action-card" href="semillas">
+                    <span class="action-icon">🌱</span>
+                    <div>
+                        <h3>Semillas</h3>
+                        <p>Crear y visualizar las semillas</p>
+                    </div>
+                </a>
+            }
+            
+            @if (esPeriodista)
+            {
+                <a class="action-card" href="notificaciones">
+                    <span class="action-icon">🔔</span>
+                    <div>
+                        <h3>Notificaciones</h3>
+                        <p>Guardar y leer resultados de los partidos</p>
+                    </div>
+                </a>   
+            }
+        </div>
+    </section>
+</div>
+
+<style>
+    .home-page {
+        padding: 1.5rem 0 3rem;
+    }
+
+    .hero-card {
+        display: grid;
+        grid-template-columns: 1.35fr 1fr;
+        gap: 2rem;
+        min-height: 340px;
+        padding: 2.7rem;
+        border-radius: 30px;
+        background:
+            radial-gradient(circle at 85% 25%, rgba(96, 165, 250, 0.32), transparent 28%),
+            radial-gradient(circle at 10% 15%, rgba(255, 255, 255, 0.08), transparent 26%),
+            linear-gradient(135deg, #0B1220 0%, #0D2B64 58%, #08142B 100%);
+        color: white;
+        box-shadow: 0 28px 70px rgba(15, 23, 42, 0.25);
+        overflow: hidden;
+        position: relative;
+    }
+
+    .hero-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, rgba(255,255,255,0.04), transparent 45%);
+        pointer-events: none;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        width: fit-content;
+        padding: 0.45rem 0.9rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.14);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        color: #F8FAFC;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        backdrop-filter: blur(10px);
+    }
+
+    .hero-content h1 {
+        font-size: clamp(2.6rem, 5vw, 4.7rem);
+        font-weight: 850;
+        letter-spacing: -0.05em;
+        margin-bottom: 1rem;
+        color: #ffffff;
+    }
+
+    .hero-content p {
+        max-width: 650px;
+        font-size: 1.12rem;
+        line-height: 1.7;
+        color: rgba(241, 245, 249, 0.88);
+        margin-bottom: 2rem;
+    }
+
+    .user-summary {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+        padding: 0.9rem 1rem;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.20);
+        width: fit-content;
+        backdrop-filter: blur(12px);
+    }
+
+    .user-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: #ffffff;
+        color: #0D2B64;
+        font-weight: 850;
+    }
+
+    .user-summary strong {
+        color: #ffffff;
+    }
+
+    .user-summary small {
+        display: block;
+        color: rgba(226, 232, 240, 0.82);
+    }
+
+    .hero-visual {
+        position: relative;
+        min-height: 280px;
+        z-index: 2;
+    }
+
+    .trophy-circle {
+        position: absolute;
+        right: 2rem;
+        top: 2rem;
+        width: 175px;
+        height: 175px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font-size: 5rem;
+        background:
+            radial-gradient(circle, rgba(255,255,255,0.24), rgba(255,255,255,0.08));
+        border: 1px solid rgba(255,255,255,0.24);
+        box-shadow:
+            inset 0 0 45px rgba(255,255,255,0.08),
+            0 24px 60px rgba(0,0,0,0.22);
+    }
+
+    .floating-card {
+        position: absolute;
+        padding: 0.8rem 1.05rem;
+        border-radius: 16px;
+        background: rgba(255,255,255,0.96);
+        color: #0f172a;
+        font-weight: 800;
+        box-shadow: 0 18px 45px rgba(0,0,0,0.22);
+        border: 1px solid rgba(255,255,255,0.4);
+    }
+
+    .card-one {
+        right: 1rem;
+        bottom: 3rem;
+    }
+
+    .card-two {
+        left: 1rem;
+        top: 5rem;
+    }
+
+    .card-three {
+        left: 2rem;
+        bottom: 1rem;
+    }
+
+    .quick-actions {
+        margin-top: 2.1rem;
+    }
+
+    .quick-actions h2 {
+        font-weight: 850;
+        margin-bottom: 1rem;
+        color: #111827;
+        letter-spacing: -0.03em;
+    }
+
+    .action-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
+        gap: 1rem;
+    }
+
+    .action-card {
+        display: flex;
+        gap: 1rem;
+        padding: 1.15rem;
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.96);
+        border: 1px solid #E5E7EB;
+        color: inherit;
+        text-decoration: none;
+        box-shadow: 0 12px 34px rgba(15, 23, 42, 0.06);
+        transition:
+            transform 0.18s ease,
+            box-shadow 0.18s ease,
+            border-color 0.18s ease,
+            background 0.18s ease;
+    }
+
+    .action-card:hover {
+        transform: translateY(-4px);
+        border-color: #93C5FD;
+        background: #ffffff;
+        box-shadow: 0 20px 50px rgba(15, 23, 42, 0.13);
+    }
+
+    .action-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 16px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
+        color: #0D2B64;
+        font-size: 1.35rem;
+        flex: 0 0 auto;
+        box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.08);
+    }
+
+    .action-card h3 {
+        font-size: 1.05rem;
+        font-weight: 850;
+        margin-bottom: 0.28rem;
+        color: #111827;
+    }
+
+    .action-card p {
+        margin: 0;
+        color: #4B5563;
+        font-size: 0.93rem;
+        line-height: 1.45;
+    }
+
+    @@media (max-width: 900px) {
+        .hero-card {
+            grid-template-columns: 1fr;
+        }
+
+        .hero-visual {
+            display: none;
+        }
+    }
+</style>
+
+@code {
+    private UsuarioReadDto? usuarioActual;
+    private bool esAdmin => usuarioActual?.EsAdministrador == true;
+    private bool esEditor => usuarioActual?.EsEditor == true;
+    private bool esPeriodista => usuarioActual?.EsPeriodista == true;
+    
+    private string InicialesUsuario
+    {
+        get
+        {
+            if (usuarioActual == null)
+            {
+                return "";
+            }
+
+            string inicialNombre = string.IsNullOrWhiteSpace(usuarioActual.Nombre) ? "" : usuarioActual.Nombre[0].ToString();
+            string inicialApellido = string.IsNullOrWhiteSpace(usuarioActual.Apellido) ? "" : usuarioActual.Apellido[0].ToString();
+
+            return $"{inicialNombre}{inicialApellido}".ToUpper();
+        }
+    }
+
+    private string TextoRoles
+    {
+        get
+        {
+            if (usuarioActual == null)
+            {
+                return "";
+            }
+
+            List<string> roles = new();
+
+            if (usuarioActual.EsAdministrador)
+            {
+                roles.Add("Administrador");
+            }
+
+            if (usuarioActual.EsEditor)
+            {
+                roles.Add("Editor");
+            }
+
+            if (!roles.Any())
+            {
+                roles.Add("Usuario");
+            }
+
+            return string.Join(", ", roles);
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        usuarioActual = SesionService.ObtenerUsuarioActual();
+    }
+}
+

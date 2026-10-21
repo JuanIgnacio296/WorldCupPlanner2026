@@ -1,0 +1,432 @@
+@page "/usuarios"
+@using DTOs
+@using Services.Interfaces
+@inject IUsuarioService UsuarioService
+@inject ISesionService SesionService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Gestión de Usuarios</PageTitle>
+
+<div class="container mt-4">
+    <h1>Gestión de Usuarios</h1>
+
+    @if (!string.IsNullOrEmpty(mensajeError))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @mensajeError
+            <button type="button" class="btn-close" @onclick="() => mensajeError = null" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(mensajeExito))
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @mensajeExito
+            <button type="button" class="btn-close" @onclick="() => mensajeExito = null" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Cambiar Mi Contraseña</h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label">Nueva Contraseña</label>
+                    <input type="password" class="form-control" @bind="nuevaContrasena" placeholder="Nueva Contraseña" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Confirmar Nueva Contraseña</label>
+                    <input type="password" class="form-control" @bind="confirmarContrasena" placeholder="Confirmar" />
+                </div>
+                <div class="col-md-4">
+                    <button class="btn btn-info text-white w-100" @onclick="CambiarContrasenaPropia">
+                        Actualizar Contraseña
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (esAdmin)
+    {
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">@(editando ? "Modificar Usuario" : "Agregar Nuevo Usuario")</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" class="form-control" @bind="usuarioForm.Nombre" placeholder="Nombre" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Apellido</label>
+                        <input type="text" class="form-control" @bind="usuarioForm.Apellido" placeholder="Apellido" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Correo</label>
+                        <input type="email" class="form-control" @bind="usuarioForm.Correo" placeholder="nombre@email.com" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Fecha de nacimiento</label>
+                        <input type="date" class="form-control" @bind="usuarioForm.FechaNacimiento" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">@(editando ? "Contraseña (dejar vacía para no cambiarla)" : "Contraseña")</label>
+                        <input type="password" class="form-control" @bind="usuarioForm.Contrasena" placeholder="Contraseña" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Roles</label>
+                        <div class="d-flex align-items-center gap-3 pt-2">
+                            <div class="form-check">
+                                <input id="rolAdministrador" class="form-check-input" type="checkbox" @bind="usuarioForm.EsAdministrador" />
+                                <label class="form-check-label" for="rolAdministrador">Administrador</label>
+                            </div>
+                            <div class="form-check">
+                                <input id="rolEditor" class="form-check-input" type="checkbox" @bind="usuarioForm.EsEditor" />
+                                <label class="form-check-label" for="rolEditor">Editor</label>
+                            </div>
+                            <div class="form-check">
+                                <input id="rolPeriodista" class="form-check-input" type="checkbox" @bind="usuarioForm.EsPeriodista" />
+                                <label class="form-check-label" for="rolPeriodista">Periodista</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end gap-2">
+                        <button class="btn btn-success w-100" @onclick="GuardarUsuario">
+                            <i class="bi bi-save"></i> @(editando ? "Actualizar" : "Guardar")
+                        </button>
+                        @if (editando)
+                        {
+                            <button class="btn btn-secondary" @onclick="CancelarEdicion">Cancelar</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Listado de Usuarios</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Apellido</th>
+                                <th>Correo</th>
+                                <th>Fecha de nacimiento</th>
+                                <th>Roles</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (usuarios == null || !usuarios.Any())
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center py-4 text-muted">
+                                        No hay usuarios registrados.
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var usuario in usuarios)
+                                {
+                                    <tr>
+                                        <td class="align-middle">@usuario.Nombre</td>
+                                        <td class="align-middle">@usuario.Apellido</td>
+                                        <td class="align-middle">@usuario.Correo</td>
+                                        <td class="align-middle">@usuario.FechaNacimiento.ToString("yyyy-MM-dd")</td>
+                                        <td class="align-middle">@MostrarRoles(usuario)</td>
+                                        <td class="text-center align-middle">
+                                            <div class="btn-group" role="group">
+                                                <button class="btn btn-sm btn-outline-warning" @onclick="() => PrepararEdicion(usuario)">
+                                                    Modificar
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" @onclick="() => EliminarUsuario(usuario.Correo)">
+                                                    Eliminar
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private List<UsuarioReadDto> usuarios = new();
+
+    private bool editando = false;
+    private string correoOriginal = "";
+    private string? mensajeError;
+    private string? mensajeExito;
+    private UsuarioReadDto? usuarioActual;
+    private UsuarioViewModel usuarioForm = new();
+    private string nuevaContrasena = "";
+    private string confirmarContrasena = "";
+
+    private bool esAdmin => usuarioActual?.EsAdministrador == true;
+
+    protected override void OnInitialized()
+    {
+        usuarioActual = SesionService.ObtenerUsuarioActual();
+
+        if (usuarioActual == null)
+        {
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+
+        if (esAdmin)
+        {
+            CargarUsuarios();
+        }
+    }
+
+    private void CambiarContrasenaPropia()
+    {
+        mensajeError = null;
+        mensajeExito = null;
+
+        try
+        {
+            if (usuarioActual == null) return;
+
+            if (string.IsNullOrWhiteSpace(nuevaContrasena))
+            {
+                mensajeError = "La nueva contraseña no puede estar vacía.";
+                return;
+            }
+
+            if (nuevaContrasena != confirmarContrasena)
+            {
+                mensajeError = "Las contraseñas no coinciden.";
+                return;
+            }
+
+            CambiarPasswordDto cambio = new CambiarPasswordDto
+            {
+                Correo = usuarioActual.Correo,
+                NuevaContrasena = nuevaContrasena,
+                ConfirmacionNuevaContrasena = confirmarContrasena
+            };
+
+            UsuarioService.CambiarPassword(usuarioActual, cambio);
+            mensajeExito = "Contraseña actualizada correctamente.";
+            nuevaContrasena = "";
+            confirmarContrasena = "";
+        }
+        catch (Exception ex)
+        {
+            mensajeError = ex.Message;
+        }
+    }
+
+    private void CargarUsuarios()
+    {
+        if (usuarioActual == null)
+        {
+            return;
+        }
+
+        usuarios = UsuarioService.ObtenerUsuarios(usuarioActual) ?? new();
+    }
+
+    private void GuardarUsuario()
+    {
+        mensajeError = null;
+        mensajeExito = null;
+
+        try
+        {
+            if (usuarioActual == null || !esAdmin)
+            {
+                mensajeError = "Solo administradores pueden gestionar usuarios.";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(usuarioForm.Nombre))
+            {
+                mensajeError = "El nombre es obligatorio.";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(usuarioForm.Apellido))
+            {
+                mensajeError = "El apellido es obligatorio.";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(usuarioForm.Correo))
+            {
+                mensajeError = "El correo es obligatorio.";
+                return;
+            }
+
+            if (!editando && string.IsNullOrWhiteSpace(usuarioForm.Contrasena))
+            {
+                mensajeError = "La contraseña es obligatoria.";
+                return;
+            }
+
+            if (editando)
+            {
+                UsuarioUpdateDto modificado = new UsuarioUpdateDto
+                {
+                    Nombre = usuarioForm.Nombre,
+                    Apellido = usuarioForm.Apellido,
+                    Correo = usuarioForm.Correo,
+                    FechaNacimiento = usuarioForm.FechaNacimiento,
+                    Roles = ObtenerRolesFormulario(),
+                    Contrasena = usuarioForm.Contrasena
+                };
+                UsuarioService.ModificarUsuario(usuarioActual, correoOriginal, modificado);
+                mensajeExito = $"Usuario '{usuarioForm.Correo}' actualizado correctamente.";
+            }
+            else
+            {
+                UsuarioCreateDto nuevo = new UsuarioCreateDto
+                {
+                    Nombre = usuarioForm.Nombre,
+                    Apellido = usuarioForm.Apellido,
+                    Correo = usuarioForm.Correo,
+                    FechaNacimiento = usuarioForm.FechaNacimiento,
+                    Contrasena = usuarioForm.Contrasena,
+                    Roles = ObtenerRolesFormulario()
+                };
+                UsuarioService.CrearUsuario(usuarioActual, nuevo);
+                mensajeExito = $"Usuario '{usuarioForm.Correo}' creado correctamente.";
+            }
+
+            LimpiarFormulario();
+            CargarUsuarios();
+        }
+        catch (Exception ex)
+        {
+            mensajeError = ex.Message;
+        }
+    }
+
+    private void PrepararEdicion(UsuarioReadDto usuario)
+    {
+        usuarioForm = new UsuarioViewModel
+        {
+            Nombre = usuario.Nombre,
+            Apellido = usuario.Apellido,
+            Correo = usuario.Correo,
+            FechaNacimiento = usuario.FechaNacimiento,
+            Contrasena = "",
+            EsAdministrador = usuario.EsAdministrador,
+            EsEditor = usuario.EsEditor,
+            EsPeriodista = usuario.EsPeriodista
+        };
+        correoOriginal = usuario.Correo;
+        editando = true;
+        mensajeError = null;
+        mensajeExito = null;
+    }
+
+    private void CancelarEdicion()
+    {
+        LimpiarFormulario();
+        mensajeError = null;
+        mensajeExito = null;
+    }
+
+    private void EliminarUsuario(string correo)
+    {
+        mensajeError = null;
+        mensajeExito = null;
+
+        try
+        {
+            if (usuarioActual == null || !esAdmin)
+            {
+                mensajeError = "Solo administradores pueden gestionar usuarios.";
+                return;
+            }
+
+            UsuarioService.EliminarUsuario(usuarioActual, correo);
+            mensajeExito = $"Usuario '{correo}' eliminado correctamente.";
+            CargarUsuarios();
+
+            if (editando && correoOriginal == correo)
+            {
+                LimpiarFormulario();
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeError = ex.Message;
+        }
+    }
+
+    private List<string> ObtenerRolesFormulario()
+    {
+        List<string> roles = new();
+
+        if (usuarioForm.EsAdministrador)
+        {
+            roles.Add("Administrador");
+        }
+
+        if (usuarioForm.EsEditor)
+        {
+            roles.Add("Editor");
+        }
+
+        if (usuarioForm.EsPeriodista)
+        {
+            roles.Add("Periodista");
+        }
+
+        if (!roles.Any())
+        {
+            roles.Add("Ninguno");
+        }
+
+        return roles;
+    }
+
+    private static string MostrarRoles(UsuarioReadDto usuario)
+    {
+        if (usuario.Roles == null || !usuario.Roles.Any() || usuario.Roles.Contains("Ninguno"))
+        {
+            return "Sin roles";
+        }
+
+        return string.Join(", ", usuario.Roles);
+    }
+
+    private void LimpiarFormulario()
+    {
+        usuarioForm = new UsuarioViewModel();
+        editando = false;
+        correoOriginal = "";
+    }
+
+    public class UsuarioViewModel
+    {
+        public string Nombre { get; set; } = "";
+        public string Apellido { get; set; } = "";
+        public string Correo { get; set; } = "";
+        public DateTime FechaNacimiento { get; set; } = DateTime.Today.AddYears(-18);
+        public string Contrasena { get; set; } = "";
+        public bool EsAdministrador { get; set; }
+        public bool EsEditor { get; set; }
+        public bool EsPeriodista { get; set; }
+    }
+}
+
